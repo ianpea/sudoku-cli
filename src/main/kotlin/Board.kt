@@ -1,53 +1,30 @@
-package org.example
+package org.sudoku
 
-import org.example.Exceptions.NoHintLeftException
+import org.sudoku.exceptions.NoHintLeftException
+import org.sudoku.exceptions.board.InsertToPreFilledCellException
+import org.sudoku.exceptions.board.InvalidCellValueException
 import kotlin.math.sqrt
 
 class Board(val size: Int = 9) {
-    val MAX_SOLUTION_COUNT: Int = 2
-
     init {
         require(size in 2..9) {
-            "Board size must be between 2 and 5."
+            // TODO
+            "Board size must be between 2 and 9."
         }
     }
 
 
-    val boardSize: Int
+    val cellCount: Int
         get() = size * size
     val boxSize: Int
         get() = sqrt(size.toDouble()).toInt()
-    val board: List<Cell> = List(boardSize) { index ->
+    val cells: List<Cell> = List(cellCount) { index ->
         Cell(CellPosition(index / size, index % size))
     }
+    val MAX_ROW = 'A' + (size - 1)
 
     lateinit var solution: List<Cell>
 
-    fun print() {
-        print("  ")
-        for (i in 1..size) {
-            print("$i ")
-        }
-        println()
-        for (i in 0 until boardSize) {
-            val cell = board[i]
-
-            val col = cell.position.col
-            if (col == 0) {
-                print('A' + cell.position.row)
-                print(' ')
-            }
-
-            if (cell.type == CellType.FILLABLE && cell.value == 0) {
-                print("_ ")
-            } else {
-                print("${cell.value} ")
-            }
-            if (col == size - 1) println()
-        }
-        println()
-
-    }
 
     /**
      * Check whether given value can be filled into the cell.
@@ -58,7 +35,7 @@ class Board(val size: Int = 9) {
         val col = cell.position.col
         val index = row * size + col
 
-        val hypotheticalBoard = board.toMutableList()
+        val hypotheticalBoard = cells.toMutableList()
         if (hypotheticalBoard[row * size + col].value != 0 && !self) {
 //            println("cell already occupied")
             return false
@@ -99,45 +76,42 @@ class Board(val size: Int = 9) {
      *   Insert the value into the cell, if its not pre-filled.
      *   @param smart Flag to determine whether user input is checked before filling in the cell. Defaults to false
      */
-    fun insert(row: Int, col: Int, valueToBe: Int, smart: Boolean = false): Boolean {
+    fun insert(row: Int, col: Int, valueToBe: Int, smart: Boolean = false): String {
         val index = row * size + col
-        val cell = board[index]
+        val cell = cells[index]
 
         if (cell.type == CellType.PRE_FILLED) {
             // requirement #1 Invalid move
-            // cannot insert to pre-filled cell (blind)
-            println("cannot insert to pre-filled cell")
-            return false
+            throw InsertToPreFilledCellException(cell, valueToBe)
         } else {
             if (smart) {
                 if (check(cell, valueToBe)) {
-                    board[index].value = valueToBe
+                    cells[index].value = valueToBe
                 } else {
                     // value is not valid in the cell
-                    println("Invalid value '$valueToBe'")
-                    return false
+                    throw InvalidCellValueException(cell, valueToBe)
                 }
             } else {
                 // TODO: blindly insert
-                board[index].value = valueToBe
+                cells[index].value = valueToBe
             }
-            return true
+            return "Successfully inserted to ${'A' + (row + 1)}$col$valueToBe."
         }
     }
 
     fun fillBoard(index: Int = 0): Boolean {
-        if (index == boardSize) return true
-        val cell = board[index]
+        if (index == cellCount) return true
+        val cell = cells[index]
 //        println("filling board")
         for (value in (1..size).shuffled()) {
             if (check(cell, value)) {
-                board[index].value = value
-                board[index].solution = value
+                cells[index].value = value
+                cells[index].solution = value
                 if (fillBoard(index + 1)) {
                     return true
                 }
-                board[index].value = 0
-                board[index].solution = 0
+                cells[index].value = 0
+                cells[index].solution = 0
             }
         }
 
@@ -146,21 +120,21 @@ class Board(val size: Int = 9) {
 
     fun generatePuzzle(expectedClueCount: Int = 30) {
         // With a full board use backtrack to generate a 1 unique solution board.
-        var currentClueCount = boardSize
-        for (i in (0 until boardSize).shuffled()) {
+        var currentClueCount = cellCount
+        for (i in (0 until cellCount).shuffled()) {
             if (currentClueCount <= expectedClueCount) {
                 break
             }
 
-            val originalValue = board[i].value
+            val originalValue = cells[i].value
 
-            board[i].value = 0
-            board[i].type = CellType.FILLABLE
+            cells[i].value = 0
+            cells[i].type = CellType.FILLABLE
             if (countSolution() == 1) {
                 currentClueCount--
             } else {
-                board[i].value = originalValue
-                board[i].type = CellType.PRE_FILLED
+                cells[i].value = originalValue
+                cells[i].type = CellType.PRE_FILLED
             }
         }
 
@@ -171,7 +145,7 @@ class Board(val size: Int = 9) {
             )
         }
         // If it reaches here, a board with unique result has been generated.
-        solution = board.map { it.copy() }
+        solution = cells.map { it.copy() }
     }
 
     fun getBox(position: CellPosition): IntArray {
@@ -180,7 +154,7 @@ class Board(val size: Int = 9) {
         val startCol = (position.col / boxSize) * boxSize
 
         val boxContents =
-            board.filter { cell ->
+            cells.filter { cell ->
                 cell.position.row in startRow until startRow + boxSize
                         && cell.position.col in startCol until startCol + boxSize
             }.map { it.value }.toIntArray()
@@ -189,9 +163,9 @@ class Board(val size: Int = 9) {
     }
 
     fun clearWholeBoard() {
-        for (i in 0 until boardSize) {
-            if (board[i].type == CellType.FILLABLE) {
-                board[i].value = 0
+        for (i in 0 until cellCount) {
+            if (cells[i].type == CellType.FILLABLE) {
+                cells[i].value = 0
             }
         }
     }
@@ -199,15 +173,15 @@ class Board(val size: Int = 9) {
     fun countSolution(index: Int = 0, limit: Int = MAX_SOLUTION_COUNT): Int {
         // Reached past the last cell:
         // this branch produced one complete valid solution.
-        if (index == boardSize) {
+        if (index == cellCount) {
             return 1
         }
 
-        val cell = board[index]
+        val cell = cells[index]
         var solutionCount = 0
 
         // This cell is already fixed, so continue to the next cell.
-        if (board[index].value != 0) {
+        if (cells[index].value != 0) {
             return countSolution(index + 1)
         }
 
@@ -215,14 +189,14 @@ class Board(val size: Int = 9) {
         // each valid value creates a different possible branch.
         for (value in (1..size).shuffled()) {
             if (check(cell, value)) {
-                board[index].value = value
+                cells[index].value = value
 
                 val resultFromChild = countSolution(index + 1, limit - solutionCount)
                 solutionCount += resultFromChild
             }
 
             // Undo this choice before trying another branch.
-            board[index].value = 0
+            cells[index].value = 0
 
             // Stop once this call has found enough solutions
             // to satisfy the requested limit.
@@ -234,9 +208,8 @@ class Board(val size: Int = 9) {
     }
 
     fun checkWinCondition(): Boolean {
-        for (i in 0 until boardSize) {
-            if (!check(board[i], board[i].value, self = true)) {
-                println("Checking cell ${board[i]}")
+        for (i in 0 until cellCount) {
+            if (!check(cells[i], cells[i].value, self = true)) {
                 return false
             }
         }
@@ -244,12 +217,15 @@ class Board(val size: Int = 9) {
     }
 
     fun hint(): String {
-        val emptyCells = board.filter({ it.type == CellType.FILLABLE && it.value == 0 })
+        val emptyCells = cells.filter({ it.type == CellType.FILLABLE && it.value == 0 })
         val hint = emptyCells.randomOrNull()
         if (hint != null) {
-            return "Hint: ${'A' + (hint.position.row)}${hint.position.col+1} ${hint.solution}"
+            return "Hint: ${'A' + (hint.position.row)}${hint.position.col + 1} ${hint.solution}"
         }
 
         throw NoHintLeftException()
+    }
+    companion object {
+        const val MAX_SOLUTION_COUNT = 2
     }
 }

@@ -1,4 +1,4 @@
-package org.example
+package org.sudoku
 
 data class Cell(var position: CellPosition, var type: CellType = CellType.PRE_FILLED, var value : Int = 0, var solution: Int = 0) {
 

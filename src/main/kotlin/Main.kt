@@ -1,11 +1,17 @@
-package org.example
+package org.sudoku
 
+import org.sudoku.exceptions.NoHintLeftException
+import org.sudoku.exceptions.board.InsertToPreFilledCellException
+import org.sudoku.exceptions.board.InvalidCellValueException
 import kotlin.math.sqrt
 
 
 fun main() {
     val size = 9
     val board = Board(size)
+    val renderer = Renderer()
+
+    var cachedOutput = ""
     println(
         "Welcome to Sudoku!\n" +
                 "RULES:\n" +
@@ -35,51 +41,71 @@ fun main() {
     println("Here is your puzzle:")
 
     while (true) {
-        board.print()
+        renderer.render(board, cachedOutput)
+        cachedOutput = ""
         val input = readln().trim()
 
         if (input == "quit") {
-            println("Session ended.")
+            cachedOutput = "Session ended."
+//            println(cachedOutput)
             break
         } else if (input == "check") {
-            if (board.checkWinCondition()){
-                println("You won!")
-                println("Moves used: ")
+            if (board.checkWinCondition()) {
+                // TODO
+                cachedOutput = "You won!" +
+                        "Moves used: "
+//                println("You won!")
+//                println("Moves used: ")
                 break
             }
-            println("Not completed")
+            cachedOutput = "Not Completed"
+//            println("Not completed")
             continue
-        }else if(input == "clear"){
+        } else if (input == "clear") {
             board.clearWholeBoard()
             continue
-        }else if (input == "hint"){
-            println(board.hint())
-            continue
+        } else if (input == "hint") {
+            try {
+                cachedOutput = board.hint()
+            } catch (e: NoHintLeftException) {
+
+                //TODO
+                cachedOutput = e.message ?: ""
+            } finally {
+                continue
+            }
         }
         val parts = input.split(" ")
         if (parts.size != 2) {
-            println("Invalid input '$input'.")
+            cachedOutput = "Invalid input '$input'."
             continue
         }
 
         val (position, inputValue) = parts
-        val row = position[0].uppercaseChar() - 'A'
+        val rowChar = position[0].uppercaseChar()
         val col = position[1].digitToIntOrNull()
 
         val cellValue = inputValue.toIntOrNull()
-        if (col == null || col <= 0) {
-            println("Invalid position input '$position'.")
+        if (col == null || col <= 0 || rowChar !in 'A'..board.MAX_ROW) {
+            cachedOutput = ("Invalid position input '$position'.")
             continue
         }
 
-        if (cellValue == null ||  cellValue !in 1..9) {
-            println("Invalid value '$cellValue'.")
+        val row = rowChar - 'A'
+
+        if (cellValue == null || cellValue !in 1..9) {
+            cachedOutput = ("Invalid value '$cellValue'.")
             continue
         }
+        try {
+            board.insert(row, col - 1, cellValue, true)
+        } catch (e: InsertToPreFilledCellException) {
+            cachedOutput = e.message ?: ""
+        } catch (e: InvalidCellValueException) {
+            cachedOutput = e.message ?: ""
+        }
 
-        board.insert(row, col - 1, cellValue, true)
     }
-
 }
 
 fun isValidSize(boardLen: Int): Boolean {
