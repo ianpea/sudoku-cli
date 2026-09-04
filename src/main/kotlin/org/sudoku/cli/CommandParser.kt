@@ -11,34 +11,15 @@ class CommandParser(val maxRowAlphabet: Char) {
         return when(input){
             "quit", "exit" ->{
                 ExitCommand
-//                statusMessage = SessionEndedStatus("Session ended.")
-//                renderer.render(statusMessage)
-//                break
             }
             "check"->{
                 CheckCommand
-//                if (board.checkWinCondition()) {
-//                    // TODO
-//                    statusMessage = CompletedStatus(1)
-//                } else {
-//                    statusMessage = NotCompletedStatus()
-//                }
-//                continue
             }
             "clear" -> {
-                CheckCommand
-//                board.clearWholeBoard()
-//                continue
+                ClearCommand
             }
             "hint" ->{
                 HintCommand
-//                try {
-//                    statusMessage = DomainStatus(board.hint())
-//                } catch (e: NoHintLeftException) {
-//                    statusMessage = ErrorStatus(e.message)
-//                } finally {
-//                    continue
-//                }
             }
             else -> {
                 parseInsertCommand(input)
@@ -59,8 +40,6 @@ class CommandParser(val maxRowAlphabet: Char) {
         val cellValue = inputValue.toIntOrNull()
         if (col == null || col <= 0 || rowChar !in 'A'..maxRowAlphabet) {
             throw InvalidInputException("Invalid input '$input'.")
-//            statusMessage = InvalidPositionStatus(position)
-//            continue
         }
 
         if (cellValue == null || cellValue !in 1..9) {
