@@ -23,6 +23,17 @@ class Renderer {
         println(status.message)
     }
 
+    fun renderWelcomeMessage(board: Board): String {
+        return "Welcome to Sudoku!\n" +
+                "RULES:\n" +
+                "#1 Numbers accepted in the cell 1(inclusive) to ${board.size}(inclusive)\n\n" +
+                "COMMANDS:\n" +
+                "To insert: Specify cell position, i.e. 'A3' followed by a space ' ' and then the value '3' -> 'A3 3'\n" +
+                "To check: Type 'check' and enter\n" +
+                "To quit: Type 'exit' / 'quit\n\n" +
+                "Here is your puzzle:"
+    }
+
     private fun printColumnHeader(board: Board) {
         print("  |")
 

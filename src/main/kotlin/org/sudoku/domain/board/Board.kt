@@ -10,20 +10,11 @@ import org.sudoku.common.result.InsertResult
 import org.sudoku.domain.cell.Cell
 import org.sudoku.domain.cell.CellPosition
 import org.sudoku.domain.cell.CellType
-import org.sudoku.domain.board.exception.InvalidBoardException
 import org.sudoku.domain.board.exception.NoHintLeftException
-import org.sudoku.domain.board.exception.SudokuException
 import kotlin.math.sqrt
 
 class Board(val size: Int = 9) {
-    init {
-        require(size in 2..9) {
-            // TODO
-            "Board size must be between 2 and 9."
-        }
-    }
-
-
+    val maxRowAlphabet = 'A' + (size - 1)
     val cellCount: Int
         get() = size * size
     val boxSize: Int
@@ -31,7 +22,6 @@ class Board(val size: Int = 9) {
     val cells: List<Cell> = List(cellCount) { index ->
         Cell(CellPosition(index / size, index % size))
     }
-    val MAX_ROW = 'A' + (size - 1)
 
     lateinit var solution: List<Cell>
 
@@ -82,8 +72,8 @@ class Board(val size: Int = 9) {
      *   Insert the value into the cell, if its not pre-filled.
      *   @param smart Flag to determine whether user input is checked before filling in the cell. Defaults to false
      */
-    fun insert(row: Int, col: Int, valueToBe: Int, smart: Boolean = false): InsertResult {
-        val index = row * size + col
+    fun insert(cell: Cell, valueToBe: Int, smart: Boolean = false): InsertResult {
+        val index = cell.position.row * size + cell.position.col
         val cell = cells[index]
 
         if (cell.type == CellType.PRE_FILLED) {
@@ -103,57 +93,6 @@ class Board(val size: Int = 9) {
             }
             return InsertResult(cell)
         }
-    }
-
-    fun fillBoard(index: Int = 0): Boolean {
-        if (index == cellCount) return true
-        val cell = cells[index]
-        for (value in (1..size).shuffled()) {
-            try {
-                if (check(cell, value)) {
-                    cells[index].value = value
-                    cells[index].solution = value
-                    if (fillBoard(index + 1)) {
-                        return true
-                    }
-                    cells[index].value = 0
-                    cells[index].solution = 0
-                }
-            } catch (_: SudokuException) {
-                continue
-            }
-        }
-
-        return false
-    }
-
-    fun generatePuzzle(expectedClueCount: Int = 30) {
-        // With a full board use backtrack to generate a 1 unique solution board.
-        var currentClueCount = cellCount
-        for (i in (0 until cellCount).shuffled()) {
-            if (currentClueCount <= expectedClueCount) {
-                break
-            }
-
-            val originalValue = cells[i].value
-
-            cells[i].value = 0
-            cells[i].type = CellType.FILLABLE
-            if (countSolution() == 1) {
-                currentClueCount--
-            } else {
-                cells[i].value = originalValue
-                cells[i].type = CellType.PRE_FILLED
-            }
-        }
-
-        if (currentClueCount != expectedClueCount) {
-            throw InvalidBoardException(
-                "Could not generate puzzle with exactly $expectedClueCount clues."
-            )
-        }
-        // If it reaches here, a board with unique result has been generated.
-        solution = cells.map { it.copy() }
     }
 
     fun getBox(position: CellPosition): IntArray {
@@ -176,47 +115,6 @@ class Board(val size: Int = 9) {
                 cells[i].value = 0
             }
         }
-    }
-
-    fun countSolution(index: Int = 0, limit: Int = MAX_SOLUTION_COUNT): Int {
-        // Reached past the last cell:
-        // this branch produced one complete valid solution.
-        if (index == cellCount) {
-            return 1
-        }
-
-        val cell = cells[index]
-        var solutionCount = 0
-
-        // This cell is already fixed, so continue to the next cell.
-        if (cells[index].value != 0) {
-            return countSolution(index + 1)
-        }
-
-        // All your multiverse starts here:
-        // each valid value creates a different possible branch.
-        for (value in (1..size).shuffled()) {
-            try {
-                if (check(cell, value)) {
-                    cells[index].value = value
-
-                    val resultFromChild = countSolution(index + 1, limit - solutionCount)
-                    solutionCount += resultFromChild
-                }
-            } catch (_: SudokuException) {
-
-            }
-
-            // Undo this choice before trying another branch.
-            cells[index].value = 0
-
-            // Stop once this call has found enough solutions
-            // to satisfy the requested limit.
-            if (solutionCount >= limit) {
-                return solutionCount
-            }
-        }
-        return solutionCount
     }
 
     fun checkWinCondition(): Boolean {
