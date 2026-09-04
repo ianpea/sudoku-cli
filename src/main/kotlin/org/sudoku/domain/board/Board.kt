@@ -1,8 +1,18 @@
-package org.sudoku
+package org.sudoku.domain.board
 
-import org.sudoku.exceptions.NoHintLeftException
-import org.sudoku.exceptions.board.InsertToPreFilledCellException
-import org.sudoku.exceptions.board.InvalidCellValueException
+import org.sudoku.domain.board.exception.InsertToPreFilledCellException
+import org.sudoku.domain.board.exception.InvalidCellValueException
+import org.sudoku.domain.board.exception.ValueExistsInBoxException
+import org.sudoku.domain.board.exception.ValueExistsInColException
+import org.sudoku.domain.board.exception.ValueExistsInRowException
+import org.sudoku.common.result.HintResult
+import org.sudoku.common.result.InsertResult
+import org.sudoku.domain.cell.Cell
+import org.sudoku.domain.cell.CellPosition
+import org.sudoku.domain.cell.CellType
+import org.sudoku.domain.board.exception.InvalidBoardException
+import org.sudoku.domain.board.exception.NoHintLeftException
+import org.sudoku.domain.board.exception.SudokuException
 import kotlin.math.sqrt
 
 class Board(val size: Int = 9) {
@@ -25,7 +35,6 @@ class Board(val size: Int = 9) {
 
     lateinit var solution: List<Cell>
 
-
     /**
      * Check whether given value can be filled into the cell.
      * @param self When true, checks the cell itself whether its value is truthy in a board or not
@@ -36,13 +45,8 @@ class Board(val size: Int = 9) {
         val index = row * size + col
 
         val hypotheticalBoard = cells.toMutableList()
-        if (hypotheticalBoard[row * size + col].value != 0 && !self) {
-//            println("cell already occupied")
-            return false
-        }
 
-        // when checking if the value is correct, just replace it and check it again
-
+        val originalValue = hypotheticalBoard[index].value
         if (self) {
             hypotheticalBoard[index].value = 0
         }
@@ -53,22 +57,24 @@ class Board(val size: Int = 9) {
 
         // row check
         if (hypotheticalRow.contains(value)) {
-//            println("value already exists in the row, ${hypotheticalRow.contentToString()}")
-            return false // value already exists in the row
+            throw ValueExistsInRowException("Value '$value' already exists in the row: [${hypotheticalRow.joinToString(", ")}].")
         }
 
         // column check
         if (hypotheticalCol.contains(value)) {
-//            println("value already exists in the row")
-            return false // value already exists in the row
+            throw ValueExistsInColException("Value '$value' already exists in the col: [${hypotheticalCol.joinToString(", ")}].")
         }
 
         // box check
         val hypotheticalBox = getBox(cell.position)
         if (hypotheticalBox.contains(value)) {
-            return false
+            throw ValueExistsInBoxException("Value '$value' already exists in the box: [${hypotheticalBox.joinToString(", ")}].")
         }
 
+
+        if (self) {
+            hypotheticalBoard[index].value = originalValue
+        }
         return true
     }
 
@@ -76,13 +82,13 @@ class Board(val size: Int = 9) {
      *   Insert the value into the cell, if its not pre-filled.
      *   @param smart Flag to determine whether user input is checked before filling in the cell. Defaults to false
      */
-    fun insert(row: Int, col: Int, valueToBe: Int, smart: Boolean = false): String {
+    fun insert(row: Int, col: Int, valueToBe: Int, smart: Boolean = false): InsertResult {
         val index = row * size + col
         val cell = cells[index]
 
         if (cell.type == CellType.PRE_FILLED) {
             // requirement #1 Invalid move
-            throw InsertToPreFilledCellException(cell, valueToBe)
+            throw InsertToPreFilledCellException(cell)
         } else {
             if (smart) {
                 if (check(cell, valueToBe)) {
@@ -95,23 +101,26 @@ class Board(val size: Int = 9) {
                 // TODO: blindly insert
                 cells[index].value = valueToBe
             }
-            return "Successfully inserted to ${'A' + (row + 1)}$col$valueToBe."
+            return InsertResult(cell)
         }
     }
 
     fun fillBoard(index: Int = 0): Boolean {
         if (index == cellCount) return true
         val cell = cells[index]
-//        println("filling board")
         for (value in (1..size).shuffled()) {
-            if (check(cell, value)) {
-                cells[index].value = value
-                cells[index].solution = value
-                if (fillBoard(index + 1)) {
-                    return true
+            try {
+                if (check(cell, value)) {
+                    cells[index].value = value
+                    cells[index].solution = value
+                    if (fillBoard(index + 1)) {
+                        return true
+                    }
+                    cells[index].value = 0
+                    cells[index].solution = 0
                 }
-                cells[index].value = 0
-                cells[index].solution = 0
+            } catch (_: SudokuException) {
+                continue
             }
         }
 
@@ -138,9 +147,8 @@ class Board(val size: Int = 9) {
             }
         }
 
-
         if (currentClueCount != expectedClueCount) {
-            throw IllegalStateException(
+            throw InvalidBoardException(
                 "Could not generate puzzle with exactly $expectedClueCount clues."
             )
         }
@@ -188,11 +196,15 @@ class Board(val size: Int = 9) {
         // All your multiverse starts here:
         // each valid value creates a different possible branch.
         for (value in (1..size).shuffled()) {
-            if (check(cell, value)) {
-                cells[index].value = value
+            try {
+                if (check(cell, value)) {
+                    cells[index].value = value
 
-                val resultFromChild = countSolution(index + 1, limit - solutionCount)
-                solutionCount += resultFromChild
+                    val resultFromChild = countSolution(index + 1, limit - solutionCount)
+                    solutionCount += resultFromChild
+                }
+            } catch (_: SudokuException) {
+
             }
 
             // Undo this choice before trying another branch.
@@ -216,15 +228,16 @@ class Board(val size: Int = 9) {
         return true
     }
 
-    fun hint(): String {
+    fun hint(): HintResult {
         val emptyCells = cells.filter({ it.type == CellType.FILLABLE && it.value == 0 })
         val hint = emptyCells.randomOrNull()
         if (hint != null) {
-            return "Hint: ${'A' + (hint.position.row)}${hint.position.col + 1} ${hint.solution}"
+            return HintResult(hint)
         }
 
         throw NoHintLeftException()
     }
+
     companion object {
         const val MAX_SOLUTION_COUNT = 2
     }

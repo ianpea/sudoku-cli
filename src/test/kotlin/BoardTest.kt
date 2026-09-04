@@ -1,5 +1,6 @@
 package org.sudoku
 
+import org.sudoku.domain.board.Board
 import kotlin.test.Test
 import kotlin.test.assertEquals
 

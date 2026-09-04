@@ -1,8 +1,17 @@
 package org.sudoku
 
-import org.sudoku.exceptions.NoHintLeftException
-import org.sudoku.exceptions.board.InsertToPreFilledCellException
-import org.sudoku.exceptions.board.InvalidCellValueException
+import org.sudoku.cli.Renderer
+import org.sudoku.cli.status.CompletedStatus
+import org.sudoku.cli.status.DomainStatus
+import org.sudoku.cli.status.ErrorStatus
+import org.sudoku.cli.status.InvalidInputStatus
+import org.sudoku.cli.status.InvalidPositionStatus
+import org.sudoku.cli.status.NotCompletedStatus
+import org.sudoku.cli.status.SessionEndedStatus
+import org.sudoku.cli.status.Status
+import org.sudoku.domain.board.Board
+import org.sudoku.domain.board.exception.NoHintLeftException
+import org.sudoku.domain.board.exception.SudokuException
 import kotlin.math.sqrt
 
 
@@ -11,7 +20,7 @@ fun main() {
     val board = Board(size)
     val renderer = Renderer()
 
-    var cachedOutput = ""
+    var statusMessage: Status? = null
     println(
         "Welcome to Sudoku!\n" +
                 "RULES:\n" +
@@ -23,61 +32,58 @@ fun main() {
                 "To quit: Type 'exit' / 'quit\n"
     )
 
-
     if (!isValidSize(size)) {
         println("Invalid size '$size'")
         return
     }
     board.fillBoard()
-    while (true) {
+
+    var puzzleGenerated = false
+    while (!puzzleGenerated) {
         try {
             board.generatePuzzle(80)
-            break // success, exit loop
-        } catch (e: IllegalStateException) {
-            // failed, try again
+            puzzleGenerated = true
+        } catch (_: IllegalStateException) {
+            // Retry puzzle generation
         }
     }
 
     println("Here is your puzzle:")
 
     while (true) {
-        renderer.render(board, cachedOutput)
-        cachedOutput = ""
+        renderer.render(board, statusMessage)
+        statusMessage = null
         val input = readln().trim()
 
-        if (input == "quit") {
-            cachedOutput = "Session ended."
-//            println(cachedOutput)
+        if (input == "quit" || input == "exit") {
+            statusMessage = SessionEndedStatus("Session ended.")
+            renderer.render(statusMessage)
             break
         } else if (input == "check") {
             if (board.checkWinCondition()) {
                 // TODO
-                cachedOutput = "You won!" +
-                        "Moves used: "
-//                println("You won!")
-//                println("Moves used: ")
-                break
+                statusMessage = CompletedStatus(1)
+            } else {
+                statusMessage = NotCompletedStatus()
             }
-            cachedOutput = "Not Completed"
-//            println("Not completed")
             continue
         } else if (input == "clear") {
             board.clearWholeBoard()
             continue
         } else if (input == "hint") {
             try {
-                cachedOutput = board.hint()
+                statusMessage = DomainStatus(board.hint())
             } catch (e: NoHintLeftException) {
 
                 //TODO
-                cachedOutput = e.message ?: ""
+                statusMessage = ErrorStatus(e.message ?: "An unexpected error has occurred.")
             } finally {
                 continue
             }
         }
         val parts = input.split(" ")
         if (parts.size != 2) {
-            cachedOutput = "Invalid input '$input'."
+            statusMessage = InvalidInputStatus(input)
             continue
         }
 
@@ -87,24 +93,22 @@ fun main() {
 
         val cellValue = inputValue.toIntOrNull()
         if (col == null || col <= 0 || rowChar !in 'A'..board.MAX_ROW) {
-            cachedOutput = ("Invalid position input '$position'.")
+            statusMessage = InvalidPositionStatus(position)
             continue
         }
 
         val row = rowChar - 'A'
 
         if (cellValue == null || cellValue !in 1..9) {
-            cachedOutput = ("Invalid value '$cellValue'.")
+            statusMessage = ErrorStatus("Invalid value '$cellValue'.")
             continue
         }
         try {
-            board.insert(row, col - 1, cellValue, true)
-        } catch (e: InsertToPreFilledCellException) {
-            cachedOutput = e.message ?: ""
-        } catch (e: InvalidCellValueException) {
-            cachedOutput = e.message ?: ""
+            val insertResult = board.insert(row, col - 1, cellValue, true)
+            statusMessage = DomainStatus(insertResult)
+        } catch (e: SudokuException) {
+            statusMessage = ErrorStatus(e.message)
         }
-
     }
 }
 
