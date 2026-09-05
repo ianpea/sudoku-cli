@@ -3,7 +3,7 @@ package org.sudoku.domain.board
 import org.sudoku.common.status.CompletedGameStatus
 import org.sudoku.common.status.GameStatus
 import org.sudoku.domain.cell.exception.CannotInsertPreFilledCellException
-import org.sudoku.domain.board.exception.ValueExistsInBoxException
+import org.sudoku.domain.board.exception.ValueExistsInSubGridException
 import org.sudoku.domain.board.exception.ValueExistsInColException
 import org.sudoku.domain.board.exception.ValueExistsInRowException
 import org.sudoku.common.status.InsertStatus
@@ -49,7 +49,7 @@ class Board() {
         // subgrid 3x3
         val subGridContents = getSubGrid(cell.position)
         if (subGridContents.contains(value)) {
-            throw ValueExistsInBoxException("Number $value already exists in the same 3×3 subgrid of ${cell.position.toCoordinateString()}.")
+            throw ValueExistsInSubGridException("Number $value already exists in the same 3×3 subgrid of ${cell.position.toCoordinateString()}.")
         }
     }
 
