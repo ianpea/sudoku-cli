@@ -63,7 +63,7 @@ class Board() {
 
         if (cell.type == CellType.PRE_FILLED) {
             // requirement #1 Invalid move
-            throw CannotInsertPreFilledCellException(cell)
+            throw CannotInsertPreFilledCellException(cell.position)
         } else {
             if (smart) {
                 check(cell, valueToBe)
