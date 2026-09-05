@@ -83,6 +83,4 @@ class BoardTest {
 
         assertEquals("Sudoku board is not completed, please fill in the empty cell(s).", board.checkWinStatus(0, 0).message)
     }
-
-
 }
