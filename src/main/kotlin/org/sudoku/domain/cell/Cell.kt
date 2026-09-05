@@ -1,6 +1,8 @@
 package org.sudoku.domain.cell
 
+import org.sudoku.domain.cell.exception.CannotClearEmptyCellException
 import org.sudoku.domain.cell.exception.CannotClearPreFilledCellException
+import org.sudoku.domain.cell.exception.CannotInsertPreFilledCellException
 
 data class Cell(
     var position: CellPosition,
@@ -11,9 +13,14 @@ data class Cell(
 
     fun clear() {
         if (type == CellType.FILLABLE) {
-            value = 0
+            if (value != 0) {
+                value = 0
+
+            } else {
+                throw CannotClearEmptyCellException(position)
+            }
         } else {
-            throw CannotClearPreFilledCellException()
+            throw CannotClearPreFilledCellException(position)
         }
     }
 
@@ -21,7 +28,7 @@ data class Cell(
         if (type == CellType.FILLABLE) {
             this.value = value
         } else {
-            throw CannotClearPreFilledCellException()
+            throw CannotInsertPreFilledCellException(position)
         }
     }
 }
