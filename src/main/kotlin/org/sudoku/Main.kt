@@ -22,7 +22,7 @@ import org.sudoku.common.SudokuException
 fun main() {
     // Game instantiation
     val moveService = MoveService()
-    val gameService = GameService(moveService, 80)
+    val gameService = GameService(moveService, 79)
     gameService.startGame()
     val renderer = Renderer(gameService.board)
     val commandParser = CommandParser(Board.MAX_ROW_ALPHABET)

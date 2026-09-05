@@ -51,13 +51,14 @@ class GameService(val moveService: MoveService, val expectedClueCount: Int = 30)
     fun clear(command: ClearCommand): GameStatus {
         // Get original copy
         val position = command.position
-        val originalCell = board.getCellByRowAndCol(position.row, position.col).copy()
+        val originalCell = board.getCellByRowAndCol(position.row, position.col)
+        val originalCellCopy = originalCell.copy()
 
         // Perform command
         originalCell.clear()
 
         // Add move once command succeeds
-        moveService.addMove(originalCell.position, originalCell.value, 0, MoveType.CLEAR)
+        moveService.addMove(originalCell.position, originalCellCopy.value, 0, MoveType.CLEAR)
         return CellClearedGameStatus(command.position)
     }
 
