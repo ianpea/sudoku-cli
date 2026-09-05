@@ -15,7 +15,7 @@ class Renderer(val board: Board) {
         }
 
         println()
-        println(gameStatus?.message ?: "Enter command (e.g., A3 4, C5 clear, hint, check):\n")
+        println(gameStatus?.message ?: "Enter command (e.g., A3 4, C5 clear, hint, check, undo, lastmove):\n")
         println()
     }
 
@@ -27,10 +27,11 @@ class Renderer(val board: Board) {
         println(
             "\nWelcome to Sudoku! This puzzle has exactly one solution. Can you solve it? \n\n" +
                     "commands:\n" +
-                    "Insert => 'B1 4'\n" +
-                    "Clear  => 'A3 clear'\n" +
-                    "Check  => 'check'\n" +
-                    "Exit   => 'exit' / 'quit\n\n" +
+                    "Insert          => 'B1 4'\n" +
+                    "Clear           => 'A3 clear'\n" +
+                    "Check           => 'check'\n" +
+                    "Show Last Move  => 'lastmove'\n" +
+                    "Exit            => 'exit' / 'quit\n\n" +
                     "Here is your puzzle:"
         )
     }

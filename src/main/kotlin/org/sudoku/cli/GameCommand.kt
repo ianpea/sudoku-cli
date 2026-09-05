@@ -6,3 +6,4 @@ data object HintCommand: GameCommand
 data object CheckCommand: GameCommand
 data object ExitCommand: GameCommand
 data object UndoCommand: GameCommand
+data object ShowLastMoveCommand: GameCommand

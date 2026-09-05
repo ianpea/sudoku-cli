@@ -10,6 +10,7 @@ import org.sudoku.cli.HintCommand
 import org.sudoku.cli.InsertCommand
 import org.sudoku.cli.ParserException
 import org.sudoku.cli.Renderer
+import org.sudoku.cli.ShowLastMoveCommand
 import org.sudoku.cli.UndoCommand
 import org.sudoku.common.status.ErrorStatus
 import org.sudoku.common.status.SessionEndedGameStatus
@@ -64,6 +65,10 @@ fun main() {
 
                 UndoCommand -> {
                     gameService.undo()
+                }
+
+                ShowLastMoveCommand -> {
+                    moveService.showLastMove()
                 }
 
             }

@@ -29,6 +29,10 @@ class CommandParser(val maxRowAlphabet: Char) {
                 UndoCommand
             }
 
+            input.contains("lastmove") ->{
+                ShowLastMoveCommand
+            }
+
             else -> {
                 parseInsertCommand(input)
             }
