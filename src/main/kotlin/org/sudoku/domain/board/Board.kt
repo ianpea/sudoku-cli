@@ -81,7 +81,7 @@ class Board() {
             cells.filter { cell ->
                 cell.position.row in startRow until startRow + boxSize
                         && cell.position.col in startCol until startCol + boxSize
-                        && cell.position.row != position.row && cell.position.col != position.col
+                        && !(cell.position.row == position.row && cell.position.col == position.col)
             }.map { it.value }.toIntArray()
 
         return boxContents
@@ -114,6 +114,10 @@ class Board() {
 
     fun getCellByRowAndCol(row: Int, col: Int): Cell {
         return cells[row * SIZE + col]
+    }
+
+    fun restore(position: CellPosition,value: Int){
+        cells[position.row * SIZE + position.col].value = value
     }
 
     companion object {

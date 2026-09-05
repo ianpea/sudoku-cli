@@ -1,8 +1,6 @@
 package org.sudoku.app
 
-import org.sudoku.cli.input.ClearCommand
-import org.sudoku.cli.input.InsertCommand
-import org.sudoku.cli.input.MoveCommand
+
 import org.sudoku.common.status.GameStatus
 import org.sudoku.common.status.ShowMoveStatus
 import org.sudoku.domain.cell.CellPosition
@@ -20,20 +18,10 @@ class MoveService {
         moveCount++
     }
 
-    fun undo(): Pair<Move, MoveCommand> {
+    fun undo(): Move {
         if (moveHistory.isNotEmpty()) {
             val lastMove = moveHistory.removeLast()
-
-            return when (lastMove.type) {
-                MoveType.INSERT -> {
-                    Pair(lastMove, ClearCommand(lastMove.position))
-                }
-
-                MoveType.CLEAR -> {
-                    Pair(lastMove, InsertCommand(lastMove.position, lastMove.previousValue))
-                }
-
-            }
+            return lastMove
         } else {
             throw NoMoveToUndoException()
         }

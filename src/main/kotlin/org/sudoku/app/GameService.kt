@@ -74,14 +74,8 @@ class GameService(val moveService: MoveService, val expectedClueCount: Int = 30)
     }
 
     fun undo(): GameStatus {
-        val (move, command) = moveService.undo()
-        when (command) {
-            is InsertCommand -> board.insert(command.position, command.value)
-            is ClearCommand -> {
-                val cell = board.getCellByRowAndCol(command.position.row, command.position.col)
-                cell.clear()
-            }
-        }
+        val move = moveService.undo()
+        board.restore(move.position, move.previousValue)
         return UndoSuccessStatus(move)
     }
 }
