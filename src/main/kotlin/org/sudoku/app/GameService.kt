@@ -1,9 +1,14 @@
 package org.sudoku.app
 
+import org.sudoku.cli.ClearCommand
+import org.sudoku.cli.InsertCommand
+import org.sudoku.common.status.CellClearedGameStatus
+import org.sudoku.common.status.DomainStatus
+import org.sudoku.common.status.GameStatus
 import org.sudoku.domain.board.Board
 import org.sudoku.domain.board.PuzzleGenerator
 import org.sudoku.domain.board.exception.InvalidBoardException
-import org.sudoku.domain.cell.Cell
+import org.sudoku.domain.move.Move
 
 class GameService(val expectedClueCount: Int = 30) {
 
@@ -15,10 +20,11 @@ class GameService(val expectedClueCount: Int = 30) {
 
     val puzzleGenerator = PuzzleGenerator()
     lateinit var board: Board
+    var moves: MutableList<Move> = mutableListOf()
+    var hintsUsed = 0
 
-    fun startGame(): Board {
+    fun startGame() {
         board = generateBoard(puzzleGenerator)
-        return board
     }
 
     fun generateBoard(puzzleGenerator: PuzzleGenerator): Board {
@@ -31,7 +37,24 @@ class GameService(val expectedClueCount: Int = 30) {
         }
     }
 
-    fun clear(cell: Cell) {
-        cell.clear()
+    fun insert(command: InsertCommand): GameStatus {
+        return DomainStatus(board.insert(command.cell, command.value))
+    }
+
+    fun clear(command: ClearCommand): GameStatus {
+        command.cell.clear()
+        return CellClearedGameStatus(command.cell)
+    }
+
+    fun check(): GameStatus {
+        return board.checkWinStatus()
+    }
+
+    fun hint(): GameStatus {
+        return DomainStatus(board.hint())
+    }
+
+    fun move() {
+
     }
 }

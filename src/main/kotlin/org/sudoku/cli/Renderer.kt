@@ -1,12 +1,12 @@
 package org.sudoku.cli
 
-import org.sudoku.common.status.Status
+import org.sudoku.common.status.GameStatus
 import org.sudoku.domain.board.Board
 import org.sudoku.domain.cell.Cell
 import org.sudoku.domain.cell.CellType
 
-class Renderer {
-    fun render(board: Board, status: Status?) {
+class Renderer(val board: Board) {
+    fun render(gameStatus: GameStatus?) {
         printColumnHeader(board)
         printHorizontalBorder(board)
 
@@ -15,22 +15,24 @@ class Renderer {
         }
 
         println()
-        println(status?.message ?: "Enter command (e.g., A3 4, C5 clear, hint, check):\n")
+        println(gameStatus?.message ?: "Enter command (e.g., A3 4, C5 clear, hint, check):\n")
         println()
     }
 
-    fun render(status: Status){
-        println(status.message)
+    fun render(gameStatus: GameStatus) {
+        println(gameStatus.message)
     }
 
     fun renderWelcomeMessage() {
-        println( "\nWelcome to Sudoku! This puzzle has exactly one solution. Can you solve it? \n\n" +
-                "commands:\n" +
-                "Insert => 'B1 4'\n" +
-                "Clear  => 'A3 clear'\n" +
-                "Check  => 'check'\n" +
-                "Exit   => 'exit' / 'quit\n\n" +
-                "Here is your puzzle:")
+        println(
+            "\nWelcome to Sudoku! This puzzle has exactly one solution. Can you solve it? \n\n" +
+                    "commands:\n" +
+                    "Insert => 'B1 4'\n" +
+                    "Clear  => 'A3 clear'\n" +
+                    "Check  => 'check'\n" +
+                    "Exit   => 'exit' / 'quit\n\n" +
+                    "Here is your puzzle:"
+        )
     }
 
     private fun printColumnHeader(board: Board) {

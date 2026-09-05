@@ -1,6 +1,6 @@
 package org.sudoku.common.status
 
-data class ErrorStatus(val errorMessage: String? = DEFAULT_MESSAGE) : Status {
+data class ErrorStatus(val errorMessage: String? = DEFAULT_MESSAGE) : GameStatus {
     override val message: String
         get() = errorMessage ?: DEFAULT_MESSAGE
 

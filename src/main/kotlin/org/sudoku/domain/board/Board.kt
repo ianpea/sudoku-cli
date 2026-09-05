@@ -1,14 +1,14 @@
 package org.sudoku.domain.board
 
-import org.sudoku.common.status.CompletedStatus
-import org.sudoku.common.status.Status
+import org.sudoku.common.status.CompletedGameStatus
+import org.sudoku.common.status.GameStatus
 import org.sudoku.domain.cell.exception.CannotInsertPreFilledCellException
 import org.sudoku.domain.board.exception.ValueExistsInBoxException
 import org.sudoku.domain.board.exception.ValueExistsInColException
 import org.sudoku.domain.board.exception.ValueExistsInRowException
 import org.sudoku.common.result.HintResult
 import org.sudoku.common.result.InsertResult
-import org.sudoku.common.status.NotCompletedStatus
+import org.sudoku.common.status.NotCompletedGameStatus
 import org.sudoku.domain.cell.Cell
 import org.sudoku.domain.cell.CellPosition
 import org.sudoku.domain.cell.CellType
@@ -88,20 +88,20 @@ class Board() {
         return boxContents
     }
 
-    fun checkWinStatus(): Status {
+    fun checkWinStatus(): GameStatus {
         try {
             if (cells.count({ it.type == CellType.FILLABLE && it.value == 0 }) == 0) {
                 for (i in 0 until cellCount) {
                     check(cells[i], cells[i].value)
                 }
             }else{
-                return NotCompletedStatus()
+                return NotCompletedGameStatus()
             }
         } catch (e: SudokuException) {
-            return NotCompletedStatus(e.message ?: "Sudoku not completed yet.")
+            return NotCompletedGameStatus(e.message ?: "Sudoku not completed yet.")
         }
         // TODO add moves
-        return CompletedStatus(1)
+        return CompletedGameStatus(1)
     }
 
     fun hint(): HintResult {

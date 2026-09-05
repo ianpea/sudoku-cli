@@ -9,11 +9,9 @@ import org.sudoku.cli.HintCommand
 import org.sudoku.cli.InsertCommand
 import org.sudoku.cli.ParserException
 import org.sudoku.cli.Renderer
-import org.sudoku.common.status.CellClearedStatus
-import org.sudoku.common.status.DomainStatus
 import org.sudoku.common.status.ErrorStatus
-import org.sudoku.common.status.SessionEndedStatus
-import org.sudoku.common.status.Status
+import org.sudoku.common.status.SessionEndedGameStatus
+import org.sudoku.common.status.GameStatus
 import org.sudoku.domain.board.Board
 import org.sudoku.domain.board.exception.SudokuException
 
@@ -21,15 +19,15 @@ import org.sudoku.domain.board.exception.SudokuException
 fun main() {
     // Game prep
     val gameService = GameService(75)
-    val renderer = Renderer()
-    val board = gameService.startGame()
+    gameService.startGame()
+    val renderer = Renderer(gameService.board)
     val commandParser = CommandParser(Board.MAX_ROW_ALPHABET)
 
-    var statusMessage: Status?
+    var gameStatusMessage: GameStatus?
 
     // Game start
     renderer.renderWelcomeMessage()
-    renderer.render(board, null)
+    renderer.render( null)
 
     // Game loop
     while (true) {
@@ -37,42 +35,40 @@ fun main() {
 
         try {
             val command = commandParser.parse(input)
-            statusMessage = when (command) {
+            gameStatusMessage = when (command) {
 
                 is InsertCommand -> {
-                    DomainStatus(board.insert(command.cell, command.value))
+                    gameService.insert(command)
                 }
 
                 is ClearCommand -> {
-                    gameService.clear(command.cell)
-                    CellClearedStatus(command.cell)
+                    gameService.clear(command)
                 }
 
                 CheckCommand -> {
-                    board.checkWinStatus()
+                    gameService.check()
                 }
-
 
                 ExitCommand -> {
                     // Game end
-                    renderer.render(SessionEndedStatus())
+                    renderer.render(SessionEndedGameStatus())
                     break
                 }
 
                 HintCommand -> {
-                    DomainStatus(board.hint())
+                    gameService.hint()
                 }
             }
         } catch (e: SudokuException) {
-            statusMessage = ErrorStatus(e.message)
+            gameStatusMessage = ErrorStatus(e.message)
         } catch (e: ParserException) {
-            statusMessage = ErrorStatus(e.message)
+            gameStatusMessage = ErrorStatus(e.message)
         }
 
-        if (statusMessage is ErrorStatus) {
-            renderer.render(statusMessage)
+        if (gameStatusMessage is ErrorStatus) {
+            renderer.render(gameStatusMessage)
         } else {
-            renderer.render(board, statusMessage)
+            renderer.render(gameStatusMessage)
         }
     }
 }
