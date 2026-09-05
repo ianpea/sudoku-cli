@@ -1,6 +1,6 @@
 package org.sudoku.domain.move.exception
 
-import org.sudoku.domain.board.exception.SudokuException
+import org.sudoku.common.SudokuException
 
-data class NoMoveToUndoException(override val message: String = "No move to undo!") : SudokuException(message) {
+data class NoMoveToUndoException(override val message: String = "No move to undo.") : SudokuException(message) {
 }

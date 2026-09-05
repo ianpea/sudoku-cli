@@ -1,9 +1,9 @@
-package org.sudoku.common.result
+package org.sudoku.common.status
 
 import org.sudoku.domain.cell.Cell
 
-data class HintResult(
+data class HintStatus(
     val hint: Cell
-) : DomainResult {
+) : GameStatus {
     override val message: String = "Hint: ${'A' + (hint.position.row)}${hint.position.col + 1} ${hint.solution}"
 }

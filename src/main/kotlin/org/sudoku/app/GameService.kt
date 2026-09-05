@@ -3,7 +3,6 @@ package org.sudoku.app
 import org.sudoku.cli.ClearCommand
 import org.sudoku.cli.InsertCommand
 import org.sudoku.common.status.CellClearedGameStatus
-import org.sudoku.common.status.DomainStatus
 import org.sudoku.common.status.GameStatus
 import org.sudoku.common.status.UndoSuccessStatus
 import org.sudoku.domain.board.Board
@@ -42,11 +41,11 @@ class GameService(val moveService: MoveService, val expectedClueCount: Int = 30)
         val originalCell = board.getCellByRowAndCol(command.position.row, command.position.col).copy()
 
         // Perform command
-        val domainResult = board.insert(command.position, command.value)
+        val status = board.insert(command.position, command.value)
 
         // Add move once command succeeds
         moveService.addMove(originalCell.position, originalCell.value, command.value, MoveType.INSERT)
-        return DomainStatus(domainResult)
+        return status
     }
 
     fun clear(command: ClearCommand): GameStatus {
@@ -63,13 +62,14 @@ class GameService(val moveService: MoveService, val expectedClueCount: Int = 30)
     }
 
     fun check(): GameStatus {
-        return board.checkWinStatus()
+        return board.checkWinStatus(moveService.moveCount, hintsUsed)
+
     }
 
     fun hint(): GameStatus {
-        val domainStatus = DomainStatus(board.hint())
+        val status = board.hint()
         hintsUsed++
-        return domainStatus
+        return status
     }
 
     fun undo(): GameStatus {

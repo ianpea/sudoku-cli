@@ -13,9 +13,11 @@ import org.sudoku.domain.move.exception.NoMovesToShowException
 
 class MoveService {
     var moveHistory: MutableList<Move> = mutableListOf()
+    var moveCount: Int = 0
 
     fun addMove(position: CellPosition, previousValue: Int, newValue: Int, type: MoveType) {
         moveHistory.add(Move(position, previousValue, newValue, type))
+        moveCount++
     }
 
     fun undo(): Pair<Move, MoveCommand> {

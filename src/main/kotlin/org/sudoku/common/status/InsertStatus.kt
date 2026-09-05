@@ -1,9 +1,9 @@
-package org.sudoku.common.result
+package org.sudoku.common.status
 
 import org.sudoku.domain.cell.Cell
 
-data class InsertResult(
+data class InsertStatus(
     val cell: Cell
-) : DomainResult {
+) : GameStatus {
     override val message: String = "Inserted ${cell.value} to ${'A' + cell.position.row}${cell.position.col+1}."
 }

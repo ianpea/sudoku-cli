@@ -6,14 +6,14 @@ import org.sudoku.domain.cell.exception.CannotInsertPreFilledCellException
 import org.sudoku.domain.board.exception.ValueExistsInBoxException
 import org.sudoku.domain.board.exception.ValueExistsInColException
 import org.sudoku.domain.board.exception.ValueExistsInRowException
-import org.sudoku.common.result.HintResult
-import org.sudoku.common.result.InsertResult
+import org.sudoku.common.status.InsertStatus
+import org.sudoku.common.status.HintStatus
 import org.sudoku.common.status.NotCompletedGameStatus
 import org.sudoku.domain.cell.Cell
 import org.sudoku.domain.cell.CellPosition
 import org.sudoku.domain.cell.CellType
 import org.sudoku.domain.board.exception.NoHintLeftException
-import org.sudoku.domain.board.exception.SudokuException
+import org.sudoku.common.SudokuException
 
 class Board() {
     val cellCount: Int = CELL_COUNT
@@ -57,7 +57,7 @@ class Board() {
      *   Insert the value into the cell, if its not pre-filled.
      *   @param smart Flag to determine whether user input is checked before filling in the cell. Defaults to false
      */
-    fun insert(position: CellPosition, valueToBe: Int, smart: Boolean = true): InsertResult {
+    fun insert(position: CellPosition, valueToBe: Int, smart: Boolean = true): InsertStatus {
         val index = position.row * SIZE + position.col
         val cell = cells[index]
 
@@ -69,7 +69,7 @@ class Board() {
                 check(cell, valueToBe)
             }
             cell.insert(valueToBe)
-            return InsertResult(cell)
+            return InsertStatus(cell)
         }
     }
 
@@ -87,7 +87,7 @@ class Board() {
         return boxContents
     }
 
-    fun checkWinStatus(): GameStatus {
+    fun checkWinStatus(moveCount: Int, hintCount: Int): GameStatus {
         try {
             if (cells.count({ it.type == CellType.FILLABLE && it.value == 0 }) == 0) {
                 for (i in 0 until cellCount) {
@@ -99,15 +99,14 @@ class Board() {
         } catch (e: SudokuException) {
             return NotCompletedGameStatus(e.message ?: "Sudoku not completed yet.")
         }
-        // TODO add moves
-        return CompletedGameStatus(1)
+        return CompletedGameStatus(moveCount, hintCount)
     }
 
-    fun hint(): HintResult {
+    fun hint(): GameStatus {
         val emptyCells = cells.filter({ it.type == CellType.FILLABLE && it.value == 0 })
         val hint = emptyCells.randomOrNull()
         if (hint != null) {
-            return HintResult(hint)
+            return HintStatus(hint)
         }
 
         throw NoHintLeftException()

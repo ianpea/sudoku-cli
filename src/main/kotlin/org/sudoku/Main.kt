@@ -8,7 +8,7 @@ import org.sudoku.cli.CommandParser
 import org.sudoku.cli.ExitCommand
 import org.sudoku.cli.HintCommand
 import org.sudoku.cli.InsertCommand
-import org.sudoku.cli.ParserException
+import org.sudoku.cli.exception.ParserException
 import org.sudoku.cli.Renderer
 import org.sudoku.cli.ShowLastMoveCommand
 import org.sudoku.cli.UndoCommand
@@ -16,13 +16,13 @@ import org.sudoku.common.status.ErrorStatus
 import org.sudoku.common.status.SessionEndedGameStatus
 import org.sudoku.common.status.GameStatus
 import org.sudoku.domain.board.Board
-import org.sudoku.domain.board.exception.SudokuException
+import org.sudoku.common.SudokuException
 
 
 fun main() {
     // Game instantiation
     val moveService = MoveService()
-    val gameService = GameService(moveService, 75)
+    val gameService = GameService(moveService, 80)
     gameService.startGame()
     val renderer = Renderer(gameService.board)
     val commandParser = CommandParser(Board.MAX_ROW_ALPHABET)

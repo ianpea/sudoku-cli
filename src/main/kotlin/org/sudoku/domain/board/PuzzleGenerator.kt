@@ -2,7 +2,7 @@ package org.sudoku.domain.board
 
 import org.sudoku.domain.board.Board.Companion.MAX_SOLUTION_COUNT
 import org.sudoku.domain.board.exception.InvalidBoardException
-import org.sudoku.domain.board.exception.SudokuException
+import org.sudoku.common.SudokuException
 import org.sudoku.domain.cell.CellType
 
 class PuzzleGenerator() {
