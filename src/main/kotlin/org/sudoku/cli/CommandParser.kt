@@ -25,6 +25,10 @@ class CommandParser(val maxRowAlphabet: Char) {
                 HintCommand
             }
 
+            input.contains("undo") -> {
+                UndoCommand
+            }
+
             else -> {
                 parseInsertCommand(input)
             }
@@ -34,18 +38,16 @@ class CommandParser(val maxRowAlphabet: Char) {
     private fun parseInsertCommand(input: String): InsertCommand {
         val cell = parseInput(input)
         return InsertCommand(
-            Cell(
-                CellPosition(
-                    cell.position.row, cell.position.col
-                            - 1
-                )
+            CellPosition(
+                cell.position.row, cell.position.col
+                        - 1
             ), value = cell.value
         )
     }
 
     private fun parseClearCommand(input: String): ClearCommand {
         val cell = parseInput(input)
-        return ClearCommand(Cell(CellPosition(cell.position.row, cell.position.col - 1)))
+        return ClearCommand(CellPosition(cell.position.row, cell.position.col - 1))
     }
 
     private fun parseInput(input: String): Cell {

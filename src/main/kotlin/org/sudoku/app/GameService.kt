@@ -5,12 +5,13 @@ import org.sudoku.cli.InsertCommand
 import org.sudoku.common.status.CellClearedGameStatus
 import org.sudoku.common.status.DomainStatus
 import org.sudoku.common.status.GameStatus
+import org.sudoku.common.status.UndoSuccessStatus
 import org.sudoku.domain.board.Board
 import org.sudoku.domain.board.PuzzleGenerator
 import org.sudoku.domain.board.exception.InvalidBoardException
-import org.sudoku.domain.move.Move
+import org.sudoku.domain.move.MoveType
 
-class GameService(val expectedClueCount: Int = 30) {
+class GameService(val moveService: MoveService, val expectedClueCount: Int = 30) {
 
     init {
         require(expectedClueCount >= 17) {
@@ -20,7 +21,6 @@ class GameService(val expectedClueCount: Int = 30) {
 
     val puzzleGenerator = PuzzleGenerator()
     lateinit var board: Board
-    var moves: MutableList<Move> = mutableListOf()
     var hintsUsed = 0
 
     fun startGame() {
@@ -38,12 +38,28 @@ class GameService(val expectedClueCount: Int = 30) {
     }
 
     fun insert(command: InsertCommand): GameStatus {
-        return DomainStatus(board.insert(command.cell, command.value))
+        // Get original copy
+        val originalCell = board.getCellByRowAndCol(command.position.row, command.position.col).copy()
+
+        // Perform command
+        val domainResult = board.insert(command.position, command.value)
+
+        // Add move once command succeeds
+        moveService.addMove(originalCell.position, originalCell.value, command.value, MoveType.INSERT)
+        return DomainStatus(domainResult)
     }
 
     fun clear(command: ClearCommand): GameStatus {
-        command.cell.clear()
-        return CellClearedGameStatus(command.cell)
+        // Get original copy
+        val position = command.position
+        val originalCell = board.getCellByRowAndCol(position.row, position.col).copy()
+
+        // Perform command
+        originalCell.clear()
+
+        // Add move once command succeeds
+        moveService.addMove(originalCell.position, originalCell.value, 0, MoveType.CLEAR)
+        return CellClearedGameStatus(command.position)
     }
 
     fun check(): GameStatus {
@@ -51,10 +67,20 @@ class GameService(val expectedClueCount: Int = 30) {
     }
 
     fun hint(): GameStatus {
-        return DomainStatus(board.hint())
+        val domainStatus = DomainStatus(board.hint())
+        hintsUsed++
+        return domainStatus
     }
 
-    fun move() {
-
+    fun undo(): GameStatus {
+        val (move, command) = moveService.undo()
+        when (command) {
+            is InsertCommand -> board.insert(command.position, command.value)
+            is ClearCommand -> {
+                val cell = board.getCellByRowAndCol(command.position.row, command.position.col)
+                cell.clear()
+            }
+        }
+        return UndoSuccessStatus(move)
     }
 }

@@ -26,7 +26,6 @@ class Board() {
 
     /**
      * Check whether given value can be filled into the cell.
-     * @param self When true, checks the cell itself whether its value is truthy in a board or not
      */
     fun check(cell: Cell, value: Int) {
         val row = cell.position.row
@@ -58,8 +57,8 @@ class Board() {
      *   Insert the value into the cell, if its not pre-filled.
      *   @param smart Flag to determine whether user input is checked before filling in the cell. Defaults to false
      */
-    fun insert(cell: Cell, valueToBe: Int, smart: Boolean = true): InsertResult {
-        val index = cell.position.row * SIZE + cell.position.col
+    fun insert(position: CellPosition, valueToBe: Int, smart: Boolean = true): InsertResult {
+        val index = position.row * SIZE + position.col
         val cell = cells[index]
 
         if (cell.type == CellType.PRE_FILLED) {
@@ -94,7 +93,7 @@ class Board() {
                 for (i in 0 until cellCount) {
                     check(cells[i], cells[i].value)
                 }
-            }else{
+            } else {
                 return NotCompletedGameStatus()
             }
         } catch (e: SudokuException) {
@@ -112,6 +111,10 @@ class Board() {
         }
 
         throw NoHintLeftException()
+    }
+
+    fun getCellByRowAndCol(row: Int, col: Int): Cell {
+        return cells[row * SIZE + col]
     }
 
     companion object {

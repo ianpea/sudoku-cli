@@ -19,7 +19,7 @@ class Renderer(val board: Board) {
         println()
     }
 
-    fun render(gameStatus: GameStatus) {
+    fun renderStatusOnly(gameStatus: GameStatus) {
         println(gameStatus.message)
     }
 
