@@ -1,6 +1,6 @@
 package org.sudoku.cli
 
-import org.sudoku.cli.status.Status
+import org.sudoku.common.status.Status
 import org.sudoku.domain.board.Board
 import org.sudoku.domain.cell.Cell
 import org.sudoku.domain.cell.CellType
@@ -23,12 +23,13 @@ class Renderer {
         println(status.message)
     }
 
-    fun renderWelcomeMessage(board: Board) {
-        println( "\nWelcome to Sudoku!\n\n" +
+    fun renderWelcomeMessage() {
+        println( "\nWelcome to Sudoku! This puzzle has exactly one solution. Can you solve it? \n\n" +
                 "commands:\n" +
-                "To insert: Specify cell position, i.e. 'A3' followed by a space ' ' and then the value '3' -> 'A3 3'\n" +
-                "To check: Type 'check' and enter\n" +
-                "To quit: Type 'exit' / 'quit\n\n" +
+                "Insert => 'B1 4'\n" +
+                "Clear  => 'A3 clear'\n" +
+                "Check  => 'check'\n" +
+                "Exit   => 'exit' / 'quit\n\n" +
                 "Here is your puzzle:")
     }
 

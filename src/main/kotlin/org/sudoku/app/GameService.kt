@@ -1,13 +1,18 @@
 package org.sudoku.app
 
-import org.sudoku.common.result.HintResult
-import org.sudoku.common.result.InsertResult
 import org.sudoku.domain.board.Board
 import org.sudoku.domain.board.PuzzleGenerator
 import org.sudoku.domain.board.exception.InvalidBoardException
 import org.sudoku.domain.cell.Cell
 
-class GameService {
+class GameService(val expectedClueCount: Int = 30) {
+
+    init {
+        require(expectedClueCount >= 17) {
+            "\n\n********* \n\nA standard 9x9 Sudoku with a unique solution requires at least 17 clues.\n" + "Proof here => https://arxiv.org/abs/1201.0749 \n\n*********\n"
+        }
+    }
+
     val puzzleGenerator = PuzzleGenerator()
     lateinit var board: Board
 
@@ -19,28 +24,14 @@ class GameService {
     fun generateBoard(puzzleGenerator: PuzzleGenerator): Board {
         while (true) {
             try {
-                // TODO externalive expectedClueCount
-                return puzzleGenerator.generatePuzzle(80)
+                return puzzleGenerator.generatePuzzle(expectedClueCount)
             } catch (_: InvalidBoardException) {
                 // Retry puzzle generation
             }
         }
     }
 
-    fun check(): Boolean {
-        return board.checkWinCondition()
-    }
-
-    fun clear() {
-        board.clearWholeBoard()
-    }
-
-    fun hint(): HintResult {
-        val hintResult = board.hint()
-        return hintResult
-    }
-
-    fun insert(cell: Cell, value: Int): InsertResult {
-        return board.insert(cell, value, true)
+    fun clear(cell: Cell) {
+        cell.clear()
     }
 }

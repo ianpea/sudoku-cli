@@ -1,4 +1,6 @@
-package org.sudoku.cli.status
+package org.sudoku.common.status
+
+import org.sudoku.domain.cell.Cell
 
 sealed interface Status {
     val message: String
@@ -6,11 +8,12 @@ sealed interface Status {
 
 data class SessionEndedStatus(override val message: String = "Session ended.") : Status
 
-data class BoardClearedStatus(override val message: String = "Board cleared.") : Status
+data class CellClearedStatus(
+    val cell: Cell,
+    override val message: String = "${cell.position.toCoordinateString()} cleared."
+) : Status
 
 data class CompletedStatus(val moves: Int) : Status {
     override val message: String = "You won!\n" +
             "Moves used: $moves."
 }
-
-data class NotCompletedStatus(override val message: String = "Not completed.") : Status

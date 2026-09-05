@@ -1,4 +1,4 @@
-package org.sudoku.cli.status
+package org.sudoku.common.status
 
 import org.sudoku.common.result.DomainResult
 

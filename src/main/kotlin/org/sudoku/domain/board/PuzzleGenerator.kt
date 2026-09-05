@@ -39,20 +39,19 @@ class PuzzleGenerator() {
         return board
     }
 
-    fun fillBoard(board:Board, index: Int = 0): Boolean {
+    fun fillBoard(board: Board, index: Int = 0): Boolean {
         if (index == board.cellCount) return true
         val cell = board.cells[index]
         for (value in (1..Board.SIZE).shuffled()) {
             try {
-                if (board.check(cell, value)) {
-                    board.cells[index].value = value
-                    board.cells[index].solution = value
-                    if (fillBoard(board, index + 1)) {
-                        return true
-                    }
-                    board.cells[index].value = 0
-                    board.cells[index].solution = 0
+                board.check(cell, value)
+                board.cells[index].value = value
+                board.cells[index].solution = value
+                if (fillBoard(board, index + 1)) {
+                    return true
                 }
+                board.cells[index].value = 0
+                board.cells[index].solution = 0
             } catch (_: SudokuException) {
                 continue
             }
@@ -81,14 +80,13 @@ class PuzzleGenerator() {
         // each valid value creates a different possible branch.
         for (value in (1..Board.SIZE).shuffled()) {
             try {
-                if (board.check(cell, value)) {
-                    board.cells[index].value = value
+                board.check(cell, value)
+                board.cells[index].value = value
 
-                    val resultFromChild = countSolution(board, index + 1, limit - solutionCount)
-                    solutionCount += resultFromChild
-                }
+                val resultFromChild = countSolution(board, index + 1, limit - solutionCount)
+                solutionCount += resultFromChild
             } catch (_: SudokuException) {
-
+                // retry
             }
 
             // Undo this choice before trying another branch.

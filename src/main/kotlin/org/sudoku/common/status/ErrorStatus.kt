@@ -1,4 +1,4 @@
-package org.sudoku.cli.status
+package org.sudoku.common.status
 
 data class ErrorStatus(val errorMessage: String? = DEFAULT_MESSAGE) : Status {
     override val message: String
