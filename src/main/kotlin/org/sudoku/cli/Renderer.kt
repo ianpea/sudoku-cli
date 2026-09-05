@@ -15,7 +15,7 @@ class Renderer(val board: Board) {
         }
 
         println()
-        println(gameStatus?.message ?: "Enter command (e.g., A3 4, C5 clear, hint, check, undo, lastmove):\n")
+        println(gameStatus?.message ?: "Enter input (e.g., A3 4, C5 clear, hint, check, undo, lastmove):\n")
         println()
     }
 

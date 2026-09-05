@@ -2,16 +2,16 @@ package org.sudoku
 
 import org.sudoku.app.GameService
 import org.sudoku.app.MoveService
-import org.sudoku.cli.CheckCommand
-import org.sudoku.cli.ClearCommand
-import org.sudoku.cli.CommandParser
-import org.sudoku.cli.ExitCommand
-import org.sudoku.cli.HintCommand
-import org.sudoku.cli.InsertCommand
+import org.sudoku.cli.input.CheckCommand
+import org.sudoku.cli.input.ClearCommand
+import org.sudoku.cli.input.CommandParser
+import org.sudoku.cli.input.ExitCommand
+import org.sudoku.cli.input.HintCommand
+import org.sudoku.cli.input.InsertCommand
 import org.sudoku.cli.exception.ParserException
 import org.sudoku.cli.Renderer
-import org.sudoku.cli.ShowLastMoveCommand
-import org.sudoku.cli.UndoCommand
+import org.sudoku.cli.input.ShowLastMoveCommand
+import org.sudoku.cli.input.UndoCommand
 import org.sudoku.common.status.ErrorStatus
 import org.sudoku.common.status.SessionEndedGameStatus
 import org.sudoku.common.status.GameStatus

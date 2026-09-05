@@ -1,4 +1,4 @@
-package org.sudoku.cli
+package org.sudoku.cli.input
 
 import org.sudoku.domain.cell.CellPosition
 

@@ -1,8 +1,8 @@
 package org.sudoku.app
 
-import org.sudoku.cli.ClearCommand
-import org.sudoku.cli.InsertCommand
-import org.sudoku.cli.MoveCommand
+import org.sudoku.cli.input.ClearCommand
+import org.sudoku.cli.input.InsertCommand
+import org.sudoku.cli.input.MoveCommand
 import org.sudoku.common.status.GameStatus
 import org.sudoku.common.status.ShowMoveStatus
 import org.sudoku.domain.cell.CellPosition

@@ -1,7 +1,7 @@
 package org.sudoku.app
 
-import org.sudoku.cli.ClearCommand
-import org.sudoku.cli.InsertCommand
+import org.sudoku.cli.input.ClearCommand
+import org.sudoku.cli.input.InsertCommand
 import org.sudoku.common.status.CellClearedGameStatus
 import org.sudoku.common.status.GameStatus
 import org.sudoku.common.status.UndoSuccessStatus
@@ -40,10 +40,10 @@ class GameService(val moveService: MoveService, val expectedClueCount: Int = 30)
         // Get original copy
         val originalCell = board.getCellByRowAndCol(command.position.row, command.position.col).copy()
 
-        // Perform command
+        // Perform input
         val status = board.insert(command.position, command.value)
 
-        // Add move once command succeeds
+        // Add move once input succeeds
         moveService.addMove(originalCell.position, originalCell.value, command.value, MoveType.INSERT)
         return status
     }
@@ -54,10 +54,10 @@ class GameService(val moveService: MoveService, val expectedClueCount: Int = 30)
         val originalCell = board.getCellByRowAndCol(position.row, position.col)
         val originalCellCopy = originalCell.copy()
 
-        // Perform command
+        // Perform input
         originalCell.clear()
 
-        // Add move once command succeeds
+        // Add move once input succeeds
         moveService.addMove(originalCell.position, originalCellCopy.value, 0, MoveType.CLEAR)
         return CellClearedGameStatus(command.position)
     }

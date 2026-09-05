@@ -1,4 +1,4 @@
-package org.sudoku.cli
+package org.sudoku.cli.input
 
 import org.sudoku.cli.exception.InvalidInputException
 import org.sudoku.domain.cell.Cell
@@ -60,8 +60,8 @@ class CommandParser(val maxRowAlphabet: Char) {
             throw InvalidInputException("Invalid input '$input'.")
         }
 
-        // A5 5 - insert command
-        // A5 clear - clear command
+        // A5 5 - insert input
+        // A5 clear - clear input
         val (part1Raw, part2Raw) = parts
         val rowChar = part1Raw[0].uppercaseChar()
         val row = rowChar - 'A'
@@ -73,14 +73,14 @@ class CommandParser(val maxRowAlphabet: Char) {
             throw InvalidInputException("Invalid input '$input'.")
         }
 
-        // insert command
+        // insert input
         if (part2 != null) {
             if (part2 in 1..9) {
                 return Cell(CellPosition(row = row, col = col), value = part2)
             }
             throw InvalidInputException("Invalid input '$input'.")
         } else {
-            // clear command
+            // clear input
             return Cell(CellPosition(row = row, col = col))
         }
     }
