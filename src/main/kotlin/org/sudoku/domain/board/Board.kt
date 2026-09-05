@@ -11,16 +11,13 @@ import org.sudoku.domain.cell.Cell
 import org.sudoku.domain.cell.CellPosition
 import org.sudoku.domain.cell.CellType
 import org.sudoku.domain.board.exception.NoHintLeftException
-import kotlin.math.sqrt
 
-class Board(val size: Int = 9) {
-    val maxRowAlphabet = 'A' + (size - 1)
-    val cellCount: Int
-        get() = size * size
-    val boxSize: Int
-        get() = sqrt(size.toDouble()).toInt()
+class Board() {
+    val maxRowAlphabet = 'A' + (SIZE - 1)
+    val cellCount: Int = CELL_COUNT
+    val boxSize: Int = BOX_SIZE
     val cells: List<Cell> = List(cellCount) { index ->
-        Cell(CellPosition(index / size, index % size))
+        Cell(CellPosition(index / SIZE, index % SIZE))
     }
 
     lateinit var solution: List<Cell>
@@ -32,7 +29,7 @@ class Board(val size: Int = 9) {
     fun check(cell: Cell, value: Int, self: Boolean = false): Boolean {
         val row = cell.position.row
         val col = cell.position.col
-        val index = row * size + col
+        val index = row * SIZE + col
 
         val hypotheticalBoard = cells.toMutableList()
 
@@ -41,8 +38,12 @@ class Board(val size: Int = 9) {
             hypotheticalBoard[index].value = 0
         }
 
-        val hypotheticalRow = hypotheticalBoard.filter { cell -> cell.position.row == row }.map { cell -> cell.value }
-        val hypotheticalCol = hypotheticalBoard.filter { cell -> cell.position.col == col }.map { cell -> cell.value }
+        val hypotheticalRow =
+            hypotheticalBoard.filter { cell -> cell.position.row == row }.filter { cell -> value != cell.value }
+                .map { cell -> cell.value }
+        val hypotheticalCol =
+            hypotheticalBoard.filter { cell -> cell.position.col == col }.filter { cell -> value != cell.value }
+                .map { cell -> cell.value }
 
 
         // row check
@@ -73,7 +74,7 @@ class Board(val size: Int = 9) {
      *   @param smart Flag to determine whether user input is checked before filling in the cell. Defaults to false
      */
     fun insert(cell: Cell, valueToBe: Int, smart: Boolean = false): InsertResult {
-        val index = cell.position.row * size + cell.position.col
+        val index = cell.position.row * SIZE + cell.position.col
         val cell = cells[index]
 
         if (cell.type == CellType.PRE_FILLED) {
@@ -96,7 +97,6 @@ class Board(val size: Int = 9) {
     }
 
     fun getBox(position: CellPosition): IntArray {
-//        (7,4)
         val startRow = (position.row / boxSize) * boxSize
         val startCol = (position.col / boxSize) * boxSize
 
@@ -138,5 +138,8 @@ class Board(val size: Int = 9) {
 
     companion object {
         const val MAX_SOLUTION_COUNT = 2
+        const val SIZE = 9
+        const val BOX_SIZE = 3
+        const val CELL_COUNT = SIZE * SIZE
     }
 }

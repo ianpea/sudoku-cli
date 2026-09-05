@@ -75,6 +75,10 @@ fun main() {
             statusMessage = ErrorStatus(e.message)
         }
 
-        renderer.render(board, statusMessage)
+        if(statusMessage is ErrorStatus){
+            renderer.render(statusMessage)
+        }else{
+            renderer.render(board, statusMessage)
+        }
     }
 }

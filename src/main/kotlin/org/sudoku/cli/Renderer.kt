@@ -15,7 +15,7 @@ class Renderer {
         }
 
         println()
-        println(status?.message ?: "...")
+        println(status?.message ?: "Enter command (e.g., A3 4, C5 clear, hint, check):\n")
         println()
     }
 
@@ -23,21 +23,19 @@ class Renderer {
         println(status.message)
     }
 
-    fun renderWelcomeMessage(board: Board): String {
-        return "Welcome to Sudoku!\n" +
-                "RULES:\n" +
-                "#1 Numbers accepted in the cell 1(inclusive) to ${board.size}(inclusive)\n\n" +
-                "COMMANDS:\n" +
+    fun renderWelcomeMessage(board: Board) {
+        println( "\nWelcome to Sudoku!\n\n" +
+                "commands:\n" +
                 "To insert: Specify cell position, i.e. 'A3' followed by a space ' ' and then the value '3' -> 'A3 3'\n" +
                 "To check: Type 'check' and enter\n" +
                 "To quit: Type 'exit' / 'quit\n\n" +
-                "Here is your puzzle:"
+                "Here is your puzzle:")
     }
 
     private fun printColumnHeader(board: Board) {
         print("  |")
 
-        for (col in 1..board.size) {
+        for (col in 1..Board.SIZE) {
             print(col)
 
             if (col % board.boxSize == 0) {
@@ -61,7 +59,7 @@ class Renderer {
         printCellValue(cell)
         printCellSeparator(board, col)
 
-        if (col == board.size - 1) {
+        if (col == Board.SIZE - 1) {
             println()
 
             if ((row + 1) % board.boxSize == 0) {
@@ -94,7 +92,7 @@ class Renderer {
     private fun printHorizontalBorder(board: Board) {
         print("--+")
 
-        repeat(board.size) { col ->
+        repeat(Board.SIZE) { col ->
             print("-")
 
             if ((col + 1) % board.boxSize == 0) {

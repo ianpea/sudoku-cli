@@ -42,7 +42,7 @@ class PuzzleGenerator() {
     fun fillBoard(board:Board, index: Int = 0): Boolean {
         if (index == board.cellCount) return true
         val cell = board.cells[index]
-        for (value in (1..board.size).shuffled()) {
+        for (value in (1..Board.SIZE).shuffled()) {
             try {
                 if (board.check(cell, value)) {
                     board.cells[index].value = value
@@ -79,7 +79,7 @@ class PuzzleGenerator() {
 
         // All your multiverse starts here:
         // each valid value creates a different possible branch.
-        for (value in (1..board.size).shuffled()) {
+        for (value in (1..Board.SIZE).shuffled()) {
             try {
                 if (board.check(cell, value)) {
                     board.cells[index].value = value

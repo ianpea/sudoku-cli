@@ -19,6 +19,7 @@ class GameService {
     fun generateBoard(puzzleGenerator: PuzzleGenerator): Board {
         while (true) {
             try {
+                // TODO externalive expectedClueCount
                 return puzzleGenerator.generatePuzzle(80)
             } catch (_: InvalidBoardException) {
                 // Retry puzzle generation
