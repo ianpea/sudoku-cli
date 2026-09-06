@@ -53,7 +53,7 @@ class BoardTest {
         board.getCellByRowAndCol(0, 1).value = 4
 
         assertFailsWith<NumberExistsInRowException> {
-            board.check(board.getCellByRowAndCol(0, 0), 4)
+            board.fillableToCell(board.getCellByRowAndCol(0, 0), 4)
         }
     }
 
@@ -63,7 +63,7 @@ class BoardTest {
         board.getCellByRowAndCol(1, 0).value = 4
 
         assertFailsWith<NumberExistsInColException> {
-            board.check(board.getCellByRowAndCol(0, 0), 4)
+            board.fillableToCell(board.getCellByRowAndCol(0, 0), 4)
         }
     }
 
@@ -73,10 +73,10 @@ class BoardTest {
         board.getCellByRowAndCol(1, 1).value = 4
 
         assertFailsWith<NumberExistsInSubGridException> {
-            board.check(board.getCellByRowAndCol(0, 0), 4)
+            board.fillableToCell(board.getCellByRowAndCol(0, 0), 4)
         }
         assertFailsWith<NumberExistsInSubGridException> {
-            board.check(board.getCellByRowAndCol(2, 2), 4)
+            board.fillableToCell(board.getCellByRowAndCol(2, 2), 4)
         }
     }
 

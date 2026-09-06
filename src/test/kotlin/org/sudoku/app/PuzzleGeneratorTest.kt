@@ -19,12 +19,10 @@ class PuzzleGeneratorTest {
     }
 
     @Test
-    fun `generatePuzzle creates the requested number of clues and a solution snapshot`() {
+    fun `generatePuzzle creates the requested number of clues`() {
         val board = PuzzleGenerator().generatePuzzle(expectedClueCount = 81)
 
         assertEquals(81, board.cells.count { it.type == CellType.PRE_FILLED })
-        assertEquals(81, board.solution.size)
-        assertEquals(board.cells.map { it.value }, board.solution.map { it.value })
     }
 
     @Test

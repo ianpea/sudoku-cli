@@ -23,6 +23,7 @@ import org.sudoku.common.SudokuException
 import org.sudoku.common.status.CompletedGameStatus
 import org.sudoku.domain.board.BoardGenerator
 import org.sudoku.domain.board.PuzzleGenerator
+import org.sudoku.domain.violation.ViolationTracker
 
 
 fun main() {
@@ -33,7 +34,8 @@ fun main() {
 fun runGame(io: GameIO, puzzleGenerator: BoardGenerator = PuzzleGenerator()){
     // Game instantiation
     val moveService = MoveService()
-    val gameService = GameService(moveService, puzzleGenerator)
+    val violationTracker = ViolationTracker()
+    val gameService = GameService(moveService, puzzleGenerator, violationTracker)
     gameService.startGame()
     val renderer = Renderer(gameService.board, io)
     val commandParser = CommandParser(Board.MAX_ROW_ALPHABET)
@@ -45,7 +47,7 @@ fun runGame(io: GameIO, puzzleGenerator: BoardGenerator = PuzzleGenerator()){
     renderer.render(null)
 
     // Game loop
-    while (true) {
+    while (gameService.checkWinCondition() !is CompletedGameStatus) {
         val input = io.read()
 
         try {
@@ -83,7 +85,7 @@ fun runGame(io: GameIO, puzzleGenerator: BoardGenerator = PuzzleGenerator()){
                 }
 
                 ShowViolationsCommand -> {
-                    gameService.violations()
+                    gameService.check()
                 }
 
             }
@@ -104,4 +106,7 @@ fun runGame(io: GameIO, puzzleGenerator: BoardGenerator = PuzzleGenerator()){
             }
         }
     }
+
+    val gameStatus=gameService.checkWinCondition()
+    renderer.render(gameStatus)
 }

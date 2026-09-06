@@ -8,12 +8,12 @@ import org.sudoku.domain.board.exception.NumberExistsInColException
 import org.sudoku.domain.board.exception.NumberExistsInRowException
 import org.sudoku.common.status.InsertStatus
 import org.sudoku.common.status.HintStatus
-import org.sudoku.common.status.NotCompletedGameStatus
 import org.sudoku.domain.cell.Cell
 import org.sudoku.domain.cell.CellPosition
 import org.sudoku.domain.cell.CellType
 import org.sudoku.domain.board.exception.NoHintLeftException
 import org.sudoku.common.SudokuException
+import org.sudoku.common.status.NotCompletedGameStatus
 import org.sudoku.domain.violation.Violation
 import org.sudoku.domain.violation.ViolationType
 
@@ -27,7 +27,7 @@ class Board() {
     /**
      * Check whether given value can be filled into the cell.
      */
-    fun check(cell: Cell, value: Int) {
+    fun fillableToCell(cell: Cell, value: Int) {
         val row = cell.position.row
         val col = cell.position.col
 
@@ -38,26 +38,25 @@ class Board() {
 
         // row
         if (rowContents.contains(value)) {
-            throw NumberExistsInRowException(Violation(ViolationType.ROW, value, row, col))
+            throw NumberExistsInRowException(Violation(ViolationType.ROW, row * SIZE + col, value))
         }
 
         // column
         if (colContents.contains(value)) {
-            throw NumberExistsInColException(Violation(ViolationType.COLUMN, value, row, col))
+            throw NumberExistsInColException(Violation(ViolationType.COLUMN, row * SIZE + col, value))
         }
 
         // subgrid 3x3
         val subGridContents = getSubGrid(cell.position)
         if (subGridContents.contains(value)) {
-            throw NumberExistsInSubGridException(Violation(ViolationType.SUBGRID, value, row, col))
+            throw NumberExistsInSubGridException(Violation(ViolationType.SUBGRID, row * SIZE + col, value))
         }
     }
 
     /**
-     *   Insert the value into the cell, if its not pre-filled.
-     *   @param smart Flag to determine whether user input is checked before filling in the cell. Defaults to false
+     *   Insert the value into the cell, if it's not pre-filled.
      */
-    fun insert(position: CellPosition, valueToBe: Int, smart: Boolean = true): InsertStatus {
+    fun insert(position: CellPosition, valueToBe: Int): InsertStatus {
         val index = position.row * SIZE + position.col
         val cell = cells[index]
 
@@ -65,9 +64,6 @@ class Board() {
             // requirement #1 Invalid move
             throw CannotInsertPreFilledCellException(cell.position)
         } else {
-            if (smart) {
-                check(cell, valueToBe)
-            }
             cell.insert(valueToBe)
             return InsertStatus(cell)
         }
@@ -91,13 +87,13 @@ class Board() {
         try {
             if (cells.none({ it.type == CellType.FILLABLE && it.value == 0 })) {
                 for (i in 0 until cellCount) {
-                    check(cells[i], cells[i].value)
+                    fillableToCell(cells[i], cells[i].value)
                 }
             } else {
                 return NotCompletedGameStatus()
             }
-        } catch (e: SudokuException) {
-            return NotCompletedGameStatus(e.message ?: "Sudoku not completed yet.")
+        } catch (_: SudokuException) {
+            return NotCompletedGameStatus()
         }
         return CompletedGameStatus(moveCount, hintCount)
     }
@@ -119,6 +115,33 @@ class Board() {
     fun restore(position: CellPosition,value: Int){
         cells[position.row * SIZE + position.col].value = value
     }
+
+    fun getRows(): List<List<Int>> =
+        (0 until SIZE).map { row ->
+            cells
+                .filter { it.position.row == row }
+                .map { it.value }
+        }
+
+    fun getColumns(): List<List<Int>> =
+        (0 until SIZE).map { col ->
+            cells
+                .filter { it.position.col == col }
+                .map { it.value }
+        }
+
+    fun getSubgrids(): List<List<Int>> =
+        (0 until SIZE).map { subgridIndex ->
+            val startRow = (subgridIndex / boxSize) * boxSize
+            val startCol = (subgridIndex % boxSize) * boxSize
+
+            cells
+                .filter { cell ->
+                    cell.position.row in startRow until startRow + boxSize &&
+                            cell.position.col in startCol until startCol + boxSize
+                }
+                .map { it.value }
+        }
 
     companion object {
         const val MAX_SOLUTION_COUNT = 2

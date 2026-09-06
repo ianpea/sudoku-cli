@@ -1,18 +1,29 @@
 package org.sudoku.domain.violation;
 
-public record Violation(
-        ViolationType type,
-        int value,
-        int row,
-        int col
-) {
-    public String message() {
-        String coordinate = (char) ('A' + row) + String.valueOf(col + 1);
-        return switch (type) {
-            case ROW -> "Number " + value + " already exists in Row " + (char) ('A' + row) + ".";
-            case COLUMN -> "Number " + value + " already exists in Col " + (col + 1) + ".";
-            case SUBGRID -> "Number " + value + " already exists in the same 3×3 subgrid of " + coordinate + ".";
-        };
+public class Violation {
+    private final ViolationType type;
+    private final int index;
+    private final int value;
+
+    public Violation(
+            ViolationType type,
+            int index,
+            int value
+    ) {
+        this.type = type;
+        this.index = index;
+        this.value = value;
+    }
+
+    public ViolationType getType() {
+        return type;
+    }
+
+    public int getIndex() {
+        return index;
+    }
+
+    public int getValue() {
+        return value;
     }
 }
-

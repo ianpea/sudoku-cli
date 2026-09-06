@@ -42,7 +42,7 @@ class PuzzleGenerator() : BoardGenerator {
         val cell = board.cells[index]
         for (value in (1..Board.SIZE).shuffled()) {
             try {
-                board.check(cell, value)
+                board.fillableToCell(cell, value)
                 board.cells[index].value = value
                 board.cells[index].solution = value
                 if (fillBoard(board, index + 1)) {
@@ -77,7 +77,7 @@ class PuzzleGenerator() : BoardGenerator {
         // Each valid candidate creates a separate solution branch.
         for (value in (1..Board.SIZE).shuffled()) {
             try {
-                board.check(cell, value)
+                board.fillableToCell(cell, value)
                 board.cells[index].value = value
 
                 val resultFromChild = countSolution(board, index + 1, limit - solutionCount)
