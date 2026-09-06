@@ -3,8 +3,10 @@ package org.sudoku.app
 import org.sudoku.cli.input.ClearCommand
 import org.sudoku.cli.input.InsertCommand
 import org.sudoku.common.status.CellClearedGameStatus
+import org.sudoku.common.status.CompletedGameStatus
 import org.sudoku.common.status.GameStatus
 import org.sudoku.common.status.NoViolationsStatus
+import org.sudoku.common.status.NotCompletedGameStatus
 import org.sudoku.common.status.UndoSuccessStatus
 import org.sudoku.common.status.ViolationStatus
 import org.sudoku.domain.board.Board
@@ -13,7 +15,12 @@ import org.sudoku.domain.board.exception.PuzzleGenFailedException
 import org.sudoku.domain.move.MoveType
 import org.sudoku.domain.violation.ViolationTracker
 
-class GameService(val moveService: MoveService, val puzzleGenerator: BoardGenerator, val violationTracker: ViolationTracker, val expectedClueCount: Int = 30) {
+class GameService(
+    val moveService: MoveService,
+    val puzzleGenerator: BoardGenerator,
+    val violationTracker: ViolationTracker,
+    val expectedClueCount: Int = 30
+) {
     init {
         require(expectedClueCount in 17..Board.CELL_COUNT) {
             "\n\n********* \n\nA standard 9x9 Sudoku with a unique solution requires at least 17 clues.\n" + "Proof here => https://arxiv.org/abs/1201.0749 \n\n*********\n"
@@ -51,14 +58,15 @@ class GameService(val moveService: MoveService, val puzzleGenerator: BoardGenera
         val originalCell = board.getCellByRowAndCol(position.row, position.col)
         val originalCellCopy = originalCell.copy()
 
-        originalCell.clear()
+        board.clear(originalCell)
 
         moveService.addMove(originalCell.position, originalCellCopy.value, 0, MoveType.CLEAR)
         return CellClearedGameStatus(command.position)
     }
 
     fun checkWinCondition(): GameStatus {
-        return board.checkWinStatus(moveService.moveCount, hintsUsed)
+        val win = board.isFullBoard() && check() is NoViolationsStatus
+        return if (win) CompletedGameStatus(moveService.moveCount, hintsUsed) else NotCompletedGameStatus()
     }
 
     fun check(): GameStatus {

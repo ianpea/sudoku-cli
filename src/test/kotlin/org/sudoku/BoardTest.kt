@@ -79,12 +79,4 @@ class BoardTest {
             board.fillableToCell(board.getCellByRowAndCol(2, 2), 4)
         }
     }
-
-    @Test
-    fun `check win status is incomplete when a fillable cell is empty`() {
-        val board = Board()
-        board.getCellByRowAndCol(0, 0).type = CellType.FILLABLE
-
-        assertEquals("Sudoku board is not completed, please fill in the empty cell(s).", board.checkWinStatus(0, 0).message)
-    }
 }

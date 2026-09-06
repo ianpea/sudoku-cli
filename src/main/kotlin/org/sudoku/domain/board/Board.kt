@@ -1,6 +1,5 @@
 package org.sudoku.domain.board
 
-import org.sudoku.common.status.CompletedGameStatus
 import org.sudoku.common.status.GameStatus
 import org.sudoku.domain.cell.exception.CannotInsertPreFilledCellException
 import org.sudoku.domain.board.exception.NumberExistsInSubGridException
@@ -12,8 +11,6 @@ import org.sudoku.domain.cell.Cell
 import org.sudoku.domain.cell.CellPosition
 import org.sudoku.domain.cell.CellType
 import org.sudoku.domain.board.exception.NoHintLeftException
-import org.sudoku.common.SudokuException
-import org.sudoku.common.status.NotCompletedGameStatus
 import org.sudoku.domain.violation.Violation
 import org.sudoku.domain.violation.ViolationType
 
@@ -83,19 +80,11 @@ class Board() {
         return boxContents
     }
 
-    fun checkWinStatus(moveCount: Int, hintCount: Int): GameStatus {
-        try {
-            if (cells.none({ it.type == CellType.FILLABLE && it.value == 0 })) {
-                for (i in 0 until cellCount) {
-                    fillableToCell(cells[i], cells[i].value)
-                }
-            } else {
-                return NotCompletedGameStatus()
-            }
-        } catch (_: SudokuException) {
-            return NotCompletedGameStatus()
+    fun isFullBoard(): Boolean {
+        if (!cells.none({ it.type == CellType.FILLABLE && it.value == 0 })) {
+            return false
         }
-        return CompletedGameStatus(moveCount, hintCount)
+        return true
     }
 
     fun hint(): GameStatus {
@@ -112,7 +101,7 @@ class Board() {
         return cells[row * SIZE + col]
     }
 
-    fun restore(position: CellPosition,value: Int){
+    fun restore(position: CellPosition, value: Int) {
         cells[position.row * SIZE + position.col].value = value
     }
 
@@ -142,6 +131,10 @@ class Board() {
                 }
                 .map { it.value }
         }
+
+    fun clear(cell:Cell){
+        cell.clear()
+    }
 
     companion object {
         const val MAX_SOLUTION_COUNT = 2

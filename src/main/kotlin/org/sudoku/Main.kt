@@ -31,11 +31,11 @@ fun main() {
     runGame(io)
 }
 
-fun runGame(io: GameIO, puzzleGenerator: BoardGenerator = PuzzleGenerator()){
+fun runGame(io: GameIO, puzzleGenerator: BoardGenerator = PuzzleGenerator()) {
     // Game instantiation
     val moveService = MoveService()
     val violationTracker = ViolationTracker()
-    val gameService = GameService(moveService, puzzleGenerator, violationTracker)
+    val gameService = GameService(moveService, puzzleGenerator, violationTracker, 80)
     gameService.startGame()
     val renderer = Renderer(gameService.board, io)
     val commandParser = CommandParser(Board.MAX_ROW_ALPHABET)
@@ -99,14 +99,9 @@ fun runGame(io: GameIO, puzzleGenerator: BoardGenerator = PuzzleGenerator()){
             renderer.renderStatusOnly(gameStatusMessage)
         } else {
             renderer.render(gameStatusMessage)
-
-            // Game end
-            if(gameStatusMessage is CompletedGameStatus){
-                break
-            }
         }
     }
 
-    val gameStatus=gameService.checkWinCondition()
+    val gameStatus = gameService.checkWinCondition()
     renderer.render(gameStatus)
 }
