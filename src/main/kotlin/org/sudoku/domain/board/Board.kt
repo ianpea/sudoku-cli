@@ -81,10 +81,7 @@ class Board() {
     }
 
     fun isFullBoard(): Boolean {
-        if (!cells.none({ it.type == CellType.FILLABLE && it.value == 0 })) {
-            return false
-        }
-        return true
+        return cells.none({ it.type == CellType.FILLABLE && it.value == 0 })
     }
 
     fun hint(): GameStatus {
