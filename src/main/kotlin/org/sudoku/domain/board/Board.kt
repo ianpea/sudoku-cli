@@ -91,7 +91,7 @@ class Board() {
 
     fun checkWinStatus(moveCount: Int, hintCount: Int): GameStatus {
         try {
-            if (cells.count({ it.type == CellType.FILLABLE && it.value == 0 }) == 0) {
+            if (cells.none({ it.type == CellType.FILLABLE && it.value == 0 })) {
                 for (i in 0 until cellCount) {
                     check(cells[i], cells[i].value)
                 }

@@ -33,13 +33,6 @@ tasks.register<Jar>("fatJar") {
     })
 }
 
-tasks.test {
-    useJUnitPlatform()
-    testLogging {
-        events("passed", "skipped", "failed")
-    }
-}
-
 kotlin {
     jvmToolchain(21)
 }
@@ -50,4 +43,7 @@ application {
 
 tasks.test {
     useJUnitPlatform()
+    testLogging {
+        events("passed", "skipped", "failed")
+    }
 }
