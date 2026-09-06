@@ -24,8 +24,6 @@ class Board() {
         Cell(CellPosition(index / SIZE, index % SIZE))
     }
 
-    lateinit var solution: List<Cell>
-
     /**
      * Check whether given value can be filled into the cell.
      */

@@ -34,8 +34,6 @@ class PuzzleGenerator() : BoardGenerator {
             )
         }
         // If it reaches here, a board with unique result has been generated.
-        board.solution = board.cells.map { it.copy() }
-
         return board
     }
 
