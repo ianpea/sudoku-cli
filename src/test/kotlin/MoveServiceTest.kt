@@ -58,11 +58,16 @@ class MoveServiceTest {
     }
 
     @Test
-    fun `empty history cannot be undone or displayed`() {
+    fun `empty history cannot be undone`() {
         val service = MoveService()
-        service.moveHistory.clear()
 
         assertFailsWith<NoMoveToUndoException> { service.undo() }
+    }
+
+    @Test
+    fun `empty history cannot be displayed`() {
+        val service = MoveService()
+
         assertFailsWith<NoMovesToShowException> { service.showLastMove() }
     }
 }
