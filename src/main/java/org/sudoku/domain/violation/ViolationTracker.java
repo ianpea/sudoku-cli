@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class ViolationTrackerService {
+public class ViolationTracker {
     private final List<Violation> violations = new ArrayList<>();
 
     public void add(Violation violation) {

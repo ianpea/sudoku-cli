@@ -11,9 +11,9 @@ import org.sudoku.domain.board.BoardGenerator
 import org.sudoku.domain.board.exception.PuzzleGenFailedException
 import org.sudoku.domain.board.exception.ViolationException
 import org.sudoku.domain.move.MoveType
-import org.sudoku.domain.violation.ViolationTrackerService
+import org.sudoku.domain.violation.ViolationTracker
 
-class GameService(val moveService: MoveService, val puzzleGenerator: BoardGenerator, val violationTrackerService: ViolationTrackerService = ViolationTrackerService(), val expectedClueCount: Int = 30) {
+class GameService(val moveService: MoveService, val puzzleGenerator: BoardGenerator, val violationTrackerService: ViolationTracker = ViolationTracker(), val expectedClueCount: Int = 30) {
     init {
         require(expectedClueCount in 17..Board.CELL_COUNT) {
             "\n\n********* \n\nA standard 9x9 Sudoku with a unique solution requires at least 17 clues.\n" + "Proof here => https://arxiv.org/abs/1201.0749 \n\n*********\n"
