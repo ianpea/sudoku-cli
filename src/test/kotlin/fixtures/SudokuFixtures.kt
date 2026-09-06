@@ -46,6 +46,7 @@ object SudokuFixtures {
         board.cells.forEachIndexed { index, cell ->
             cell.value = values[index]
             cell.type = CellType.PRE_FILLED
+            cell.solution = 5
         }
         board.cells[0].type = CellType.FILLABLE
 

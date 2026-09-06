@@ -5,6 +5,8 @@ import org.sudoku.app.GameService
 import org.sudoku.app.MoveService
 import org.sudoku.cli.input.ClearCommand
 import org.sudoku.cli.input.InsertCommand
+import org.sudoku.common.status.CompletedGameStatus
+import org.sudoku.common.status.NotCompletedGameStatus
 import org.sudoku.domain.board.Board
 import org.sudoku.domain.board.exception.NoHintLeftException
 import org.sudoku.domain.cell.CellPosition
@@ -143,18 +145,35 @@ class GameServiceTest {
     @Nested
     inner class Hint {
         @Test
-        fun `returns a valid hint when given unfinished board`(){
+        fun `returns a valid hint when given unfinished board`() {
             val board = SudokuFixtures.hintableBoard()
             val hintStatus = board.hint()
-            assertEquals("Hint: 'A1 0'.", hintStatus.message)
+            assertEquals("Hint: 'A1 5'.", hintStatus.message)
         }
 
         @Test
-        fun `return no hints when a board is completed`(){
+        fun `return no hints when a board is completed`() {
             val board = SudokuFixtures.solvedBoard()
-            assertFailsWith<NoHintLeftException>{
+            assertFailsWith<NoHintLeftException> {
                 board.hint()
             }
+        }
+    }
+
+    @Nested
+    inner class Check {
+        @Test
+        fun `check should end the game when board is completed`() {
+            val board = SudokuFixtures.solvedBoard()
+            val status = board.checkWinStatus(1, 1)
+            assertEquals(CompletedGameStatus(1, 1), status)
+        }
+
+        @Test
+        fun `check should not end the game when board is not completed`() {
+            val board = SudokuFixtures.hintableBoard()
+            val status = board.checkWinStatus(1, 1)
+            assertEquals(NotCompletedGameStatus(), status)
         }
     }
 
@@ -162,6 +181,13 @@ class GameServiceTest {
     fun `game service requires at least 17 clues`() {
         assertFailsWith<IllegalArgumentException> {
             GameService(MoveService(), expectedClueCount = 16)
+        }
+    }
+
+    @Test
+    fun `game requires at most 81 clues`() {
+        assertFailsWith<IllegalArgumentException> {
+            GameService(MoveService(), 82)
         }
     }
 

@@ -13,7 +13,7 @@ import org.sudoku.domain.move.MoveType
 class GameService(val moveService: MoveService, val expectedClueCount: Int = 30) {
 
     init {
-        require(expectedClueCount >= 17) {
+        require(expectedClueCount in 17..Board.CELL_COUNT) {
             "\n\n********* \n\nA standard 9x9 Sudoku with a unique solution requires at least 17 clues.\n" + "Proof here => https://arxiv.org/abs/1201.0749 \n\n*********\n"
         }
     }
