@@ -35,7 +35,7 @@ fun runGame(io: GameIO, puzzleGenerator: BoardGenerator = PuzzleGenerator()) {
     // Game instantiation
     val moveService = MoveService()
     val violationTracker = ViolationTracker()
-    val gameService = GameService(moveService, puzzleGenerator, violationTracker, 80)
+    val gameService = GameService(moveService, puzzleGenerator, violationTracker)
     gameService.startGame()
     val renderer = Renderer(gameService.board, io)
     val commandParser = CommandParser(Board.MAX_ROW_ALPHABET)
