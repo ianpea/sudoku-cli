@@ -2,17 +2,12 @@ package org.sudoku.domain.board
 
 import org.sudoku.common.status.GameStatus
 import org.sudoku.domain.cell.exception.CannotInsertPreFilledCellException
-import org.sudoku.domain.board.exception.NumberExistsInSubGridException
-import org.sudoku.domain.board.exception.NumberExistsInColException
-import org.sudoku.domain.board.exception.NumberExistsInRowException
 import org.sudoku.common.status.InsertStatus
 import org.sudoku.common.status.HintStatus
 import org.sudoku.domain.cell.Cell
 import org.sudoku.domain.cell.CellPosition
 import org.sudoku.domain.cell.CellType
 import org.sudoku.domain.board.exception.NoHintLeftException
-import org.sudoku.domain.violation.Violation
-import org.sudoku.domain.violation.ViolationType
 
 class Board() {
     val cellCount: Int = CELL_COUNT
@@ -21,12 +16,9 @@ class Board() {
         Cell(CellPosition(index / SIZE, index % SIZE))
     }
 
-    /**
-     * Check whether given value can be filled into the cell.
-     */
-    fun fillableToCell(cell: Cell, value: Int) {
-        val row = cell.position.row
-        val col = cell.position.col
+    fun canPlaceValue(position: CellPosition, value: Int): Boolean {
+        val row = position.row
+        val col = position.col
 
         val rowContents =
             cells.filter { cell -> cell.position.row == row && cell.position.col != col }.map { cell -> cell.value }
@@ -35,19 +27,23 @@ class Board() {
 
         // row
         if (rowContents.contains(value)) {
-            throw NumberExistsInRowException(Violation(ViolationType.ROW, row * SIZE + col, value))
+            return false
+//            throw NumberExistsInRowException(Violation(ViolationType.ROW, row * SIZE + col, value))
         }
 
         // column
         if (colContents.contains(value)) {
-            throw NumberExistsInColException(Violation(ViolationType.COLUMN, row * SIZE + col, value))
+            return false
+//            throw NumberExistsInColException(Violation(ViolationType.COLUMN, row * SIZE + col, value))
         }
 
         // subgrid 3x3
-        val subGridContents = getSubGrid(cell.position)
+        val subGridContents = getSubGrid(position)
         if (subGridContents.contains(value)) {
-            throw NumberExistsInSubGridException(Violation(ViolationType.SUBGRID, row * SIZE + col, value))
+            return false
+//            throw NumberExistsInSubGridException(Violation(ViolationType.SUBGRID, row * SIZE + col, value))
         }
+        return true
     }
 
     /**

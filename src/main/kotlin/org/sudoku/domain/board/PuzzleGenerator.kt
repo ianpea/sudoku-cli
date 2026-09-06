@@ -2,7 +2,6 @@ package org.sudoku.domain.board
 
 import org.sudoku.domain.board.Board.Companion.MAX_SOLUTION_COUNT
 import org.sudoku.domain.board.exception.PuzzleGenFailedException
-import org.sudoku.common.SudokuException
 import org.sudoku.domain.cell.CellType
 
 class PuzzleGenerator() : BoardGenerator {
@@ -41,8 +40,7 @@ class PuzzleGenerator() : BoardGenerator {
         if (index == board.cellCount) return true
         val cell = board.cells[index]
         for (value in (1..Board.SIZE).shuffled()) {
-            try {
-                board.fillableToCell(cell, value)
+            if (board.canPlaceValue(cell.position, value)) {
                 board.cells[index].value = value
                 board.cells[index].solution = value
                 if (fillBoard(board, index + 1)) {
@@ -50,8 +48,6 @@ class PuzzleGenerator() : BoardGenerator {
                 }
                 board.cells[index].value = 0
                 board.cells[index].solution = 0
-            } catch (_: SudokuException) {
-                continue
             }
         }
 
@@ -76,14 +72,13 @@ class PuzzleGenerator() : BoardGenerator {
 
         // Each valid candidate creates a separate solution branch.
         for (value in (1..Board.SIZE).shuffled()) {
-            try {
-                board.fillableToCell(cell, value)
+            if (board.canPlaceValue(cell.position, value)) {
                 board.cells[index].value = value
 
                 val resultFromChild = countSolution(board, index + 1, limit - solutionCount)
                 solutionCount += resultFromChild
-            } catch (_: SudokuException) {
-                // retry
+            } else {
+                continue
             }
 
             // Undo this choice before trying another branch.

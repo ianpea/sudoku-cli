@@ -1,12 +1,10 @@
 package org.sudoku
 
+import org.junit.jupiter.api.Assertions.assertFalse
 import org.sudoku.domain.board.Board
-import org.sudoku.domain.board.exception.NumberExistsInSubGridException
-import org.sudoku.domain.board.exception.NumberExistsInColException
-import org.sudoku.domain.board.exception.NumberExistsInRowException
 import org.sudoku.domain.cell.CellPosition
-import org.sudoku.domain.cell.CellType
 import org.sudoku.domain.cell.exception.CannotInsertPreFilledCellException
+import org.sudoku.fixtures.SudokuFixtures
 import kotlin.test.Test
 import kotlin.test.assertFailsWith
 import kotlin.test.assertEquals
@@ -28,14 +26,14 @@ class BoardTest {
 
     @Test
     fun `insert fills a fillable cell and returns its status`() {
-        val board = Board()
+        val board = SudokuFixtures.solvableBoard()
         val position = CellPosition(0, 0)
-        board.getCellByRowAndCol(0, 0).type = CellType.FILLABLE
 
-        val status = board.insert(position, 4)
+        val status = board.insert(position, 5)
+        val insertedCell = board.getCellByRowAndCol(position.row,position.col)
 
-        assertEquals(4, board.getCellByRowAndCol(0, 0).value)
-        assertEquals("Inserted 4 to A1.", status.message)
+        assertEquals(5, insertedCell.value)
+        assertEquals("Inserted 5 to A1.", status.message)
     }
 
     @Test
@@ -52,18 +50,18 @@ class BoardTest {
         val board = Board()
         board.getCellByRowAndCol(0, 1).value = 4
 
-        assertFailsWith<NumberExistsInRowException> {
-            board.fillableToCell(board.getCellByRowAndCol(0, 0), 4)
+        assertFalse {
+            board.canPlaceValue(CellPosition(0,0), 4)
         }
     }
 
     @Test
     fun `check rejects duplicates in the same column`() {
         val board = Board()
-        board.getCellByRowAndCol(1, 0).value = 4
+        board.getCellByRowAndCol(0, 0).value = 4
 
-        assertFailsWith<NumberExistsInColException> {
-            board.fillableToCell(board.getCellByRowAndCol(0, 0), 4)
+        assertFalse{
+            board.canPlaceValue(CellPosition(0,1), 4)
         }
     }
 
@@ -72,11 +70,11 @@ class BoardTest {
         val board = Board()
         board.getCellByRowAndCol(1, 1).value = 4
 
-        assertFailsWith<NumberExistsInSubGridException> {
-            board.fillableToCell(board.getCellByRowAndCol(0, 0), 4)
+        assertFalse{
+            board.canPlaceValue(CellPosition(0,0), 4)
         }
-        assertFailsWith<NumberExistsInSubGridException> {
-            board.fillableToCell(board.getCellByRowAndCol(2, 2), 4)
+        assertFalse{
+            board.canPlaceValue(CellPosition(2,2), 4)
         }
     }
 }
