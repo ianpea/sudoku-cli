@@ -21,7 +21,7 @@ class CommandParser(val maxRowAlphabet: Char) {
                 parseClearCommand(input)
             }
 
-            input =="HINT" -> {
+            input == "HINT" -> {
                 HintCommand
             }
 
@@ -29,11 +29,11 @@ class CommandParser(val maxRowAlphabet: Char) {
                 UndoCommand
             }
 
-            input == "LASTMOVE" ->{
+            input == "LASTMOVE" -> {
                 ShowLastMoveCommand
             }
 
-            input == "VIOLATIONS" ->{
+            input == "VIOLATIONS" -> {
                 ShowViolationsCommand
             }
 
@@ -69,7 +69,7 @@ class CommandParser(val maxRowAlphabet: Char) {
         val (part1Raw, part2Raw) = parts
         val rowChar = part1Raw[0].uppercaseChar()
         val row = rowChar - 'A'
-        if(part1Raw.length != 2){
+        if (part1Raw.length != 2) {
             throw InvalidInputException("Invalid input '$input'.")
         }
         val col = part1Raw[1].digitToIntOrNull()
@@ -88,7 +88,7 @@ class CommandParser(val maxRowAlphabet: Char) {
             throw InvalidInputException("Invalid input '$input'.")
         } else {
             // clear input
-            if(part2Raw == "CLEAR"){
+            if (part2Raw == "CLEAR") {
                 return Cell(CellPosition(row = row, col = col))
             }
             throw InvalidInputException("Invalid input '$input'.")

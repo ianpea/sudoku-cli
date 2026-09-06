@@ -30,7 +30,7 @@ class BoardTest {
         val position = CellPosition(0, 0)
 
         val status = board.insert(position, 5)
-        val insertedCell = board.getCellByRowAndCol(position.row,position.col)
+        val insertedCell = board.getCellByRowAndCol(position.row, position.col)
 
         assertEquals(5, insertedCell.value)
         assertEquals("Inserted 5 to A1.", status.message)
@@ -51,7 +51,7 @@ class BoardTest {
         board.getCellByRowAndCol(0, 1).value = 4
 
         assertFalse {
-            board.canPlaceValue(CellPosition(0,0), 4)
+            board.canPlaceValue(CellPosition(0, 0), 4)
         }
     }
 
@@ -60,8 +60,8 @@ class BoardTest {
         val board = Board()
         board.getCellByRowAndCol(0, 0).value = 4
 
-        assertFalse{
-            board.canPlaceValue(CellPosition(0,1), 4)
+        assertFalse {
+            board.canPlaceValue(CellPosition(0, 1), 4)
         }
     }
 
@@ -70,11 +70,11 @@ class BoardTest {
         val board = Board()
         board.getCellByRowAndCol(1, 1).value = 4
 
-        assertFalse{
-            board.canPlaceValue(CellPosition(0,0), 4)
+        assertFalse {
+            board.canPlaceValue(CellPosition(0, 0), 4)
         }
-        assertFalse{
-            board.canPlaceValue(CellPosition(2,2), 4)
+        assertFalse {
+            board.canPlaceValue(CellPosition(2, 2), 4)
         }
     }
 }

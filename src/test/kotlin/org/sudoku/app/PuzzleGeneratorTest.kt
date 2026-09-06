@@ -29,7 +29,7 @@ class PuzzleGeneratorTest {
     fun `generated puzzle board should only contain 1 solution`() {
         val puzzleGenerator = PuzzleGenerator()
         val board = puzzleGenerator.generatePuzzle(30)
-        val solutionCount = puzzleGenerator.countSolution(board,0 ,2)
+        val solutionCount = puzzleGenerator.countSolution(board, 0, 2)
 
         assertEquals(1, solutionCount)
     }

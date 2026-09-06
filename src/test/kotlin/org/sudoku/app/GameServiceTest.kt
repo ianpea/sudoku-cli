@@ -213,9 +213,9 @@ class GameServiceTest {
     }
 
     @Nested
-    inner class GameFlow{
+    inner class GameFlow {
         @Test
-        fun `game ends when board is filled and no violation found`(){
+        fun `game ends when board is filled and no violation found`() {
             val board = SudokuFixtures.solvableBoard()
             val puzzleGenerator = FakePuzzleGenerator(board)
             val io = FakeGameIO(listOf("A1 5"))

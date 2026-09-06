@@ -31,7 +31,7 @@ class MoveService {
         if (_moveHistory.isNotEmpty()) {
             val lastMove = _moveHistory.last()
             return ShowMoveStatus(lastMove)
-        }else{
+        } else {
             throw NoMovesToShowException()
         }
     }

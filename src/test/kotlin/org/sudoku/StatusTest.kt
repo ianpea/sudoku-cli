@@ -26,7 +26,10 @@ class StatusTest {
         val move = Move(position, 0, 4, MoveType.INSERT)
 
         assertEquals("You won!\nMoves used: 3.\nHints used: 1.", CompletedGameStatus(3, 1).message)
-        assertEquals("Sudoku board is not completed, please fill in the empty cell(s).", NotCompletedGameStatus().message)
+        assertEquals(
+            "Sudoku board is not completed, please fill in the empty cell(s).",
+            NotCompletedGameStatus().message
+        )
         assertEquals("Inserted 4 to A1.", InsertStatus(cell).message)
         assertEquals("A1 cleared.", CellClearedGameStatus(position).message)
         assertEquals("Hint: 'A1 4'.", HintStatus(cell).message)

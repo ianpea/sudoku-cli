@@ -46,7 +46,7 @@ class CommandParserTest {
     }
 
     @Test
-    fun `parse rejects malformed clear command`(){
+    fun `parse rejects malformed clear command`() {
         listOf("A1 CLEARasd").forEach { input ->
             assertFailsWith<InvalidInputException> { parser.parse(input) }
         }
