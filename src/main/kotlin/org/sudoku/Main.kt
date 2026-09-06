@@ -17,6 +17,7 @@ import org.sudoku.common.status.SessionEndedGameStatus
 import org.sudoku.common.status.GameStatus
 import org.sudoku.domain.board.Board
 import org.sudoku.common.SudokuException
+import org.sudoku.common.status.CompletedGameStatus
 
 
 fun main() {
@@ -82,6 +83,11 @@ fun main() {
             renderer.renderStatusOnly(gameStatusMessage)
         } else {
             renderer.render(gameStatusMessage)
+
+            // Game end
+            if(gameStatusMessage is CompletedGameStatus){
+                break
+            }
         }
     }
 }

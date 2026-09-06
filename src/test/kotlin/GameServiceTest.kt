@@ -163,14 +163,14 @@ class GameServiceTest {
     @Nested
     inner class Check {
         @Test
-        fun `check should end the game when board is completed`() {
+        fun `checking a solved board should complete the game`() {
             val board = SudokuFixtures.solvedBoard()
             val status = board.checkWinStatus(1, 1)
             assertEquals(CompletedGameStatus(1, 1), status)
         }
 
         @Test
-        fun `check should not end the game when board is not completed`() {
+        fun `checking an unsolved board should not complete the game`() {
             val board = SudokuFixtures.hintableBoard()
             val status = board.checkWinStatus(1, 1)
             assertEquals(NotCompletedGameStatus(), status)
