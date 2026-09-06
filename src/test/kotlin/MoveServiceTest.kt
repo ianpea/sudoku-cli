@@ -27,11 +27,10 @@ class MoveServiceTest {
     fun `undoing an insert returns the previous value`() {
         val service = MoveService()
         service.addMove(position, 0, 5, MoveType.INSERT)
-
+        assertEquals(position, service.moveHistory.single().position)
         val move = service.undo()
 
         assertEquals(0, move.previousValue)
-        assertEquals(position, service.moveHistory.single().position)
         assertEquals(0, service.moveHistory.size)
     }
 
@@ -39,11 +38,11 @@ class MoveServiceTest {
     fun `undoing a clear returns the previous value`() {
         val service = MoveService()
         service.addMove(position, 5, 0, MoveType.CLEAR)
+        assertEquals(position, service.moveHistory.single().position)
 
         val move = service.undo()
 
         assertEquals(5, move.previousValue)
-        assertEquals(position, service.moveHistory.single().position)
         assertEquals(0, service.moveHistory.size)
     }
 

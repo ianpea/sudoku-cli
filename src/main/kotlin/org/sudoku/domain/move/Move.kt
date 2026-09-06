@@ -10,9 +10,9 @@ data class Move(
 ) {
     override fun toString(): String {
         return if (type == MoveType.INSERT) {
-            "$type ${position.toCoordinateString()}, with value: $newValue."
+            "$type ${position.toCoordinateString()}, with value: $newValue"
         } else {
-            "$type ${position.toCoordinateString()}."
+            "$type ${position.toCoordinateString()}"
         }
     }
 }
