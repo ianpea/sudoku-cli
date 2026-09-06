@@ -51,7 +51,6 @@ class Board() {
         val cell = cells[index]
 
         if (cell.type == CellType.PRE_FILLED) {
-            // requirement #1 Invalid move
             throw CannotInsertPreFilledCellException(cell.position)
         } else {
             cell.insert(valueToBe)

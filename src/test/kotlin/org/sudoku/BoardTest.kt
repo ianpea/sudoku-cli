@@ -1,6 +1,5 @@
 package org.sudoku
 
-import org.junit.jupiter.api.Assertions.assertFalse
 import org.sudoku.domain.board.Board
 import org.sudoku.domain.cell.CellPosition
 import org.sudoku.domain.cell.exception.CannotInsertPreFilledCellException
@@ -8,6 +7,7 @@ import org.sudoku.fixtures.SudokuFixtures
 import kotlin.test.Test
 import kotlin.test.assertFailsWith
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 
 class BoardTest {
     @Test

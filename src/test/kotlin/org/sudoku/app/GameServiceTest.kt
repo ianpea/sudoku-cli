@@ -20,6 +20,7 @@ import kotlin.test.Test
 import kotlin.test.assertContains
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
+import kotlin.test.assertFalse
 
 class GameServiceTest {
 
@@ -194,7 +195,7 @@ class GameServiceTest {
         }
 
         @Test
-        fun `col check returns violations when violation found`() {
+        fun `column check returns violations when violation found`() {
             val board = SudokuFixtures.colViolatedBoard()
             val puzzleGenerator = FakePuzzleGenerator(board)
             val io = FakeGameIO(listOf("check", "quit"))
@@ -230,6 +231,7 @@ class GameServiceTest {
             val io = FakeGameIO(listOf("check", "quit"))
             runGame(io, puzzleGenerator)
             assertContains(io.output(), "Number 4 already exists in Row A.")
+            assertFalse(io.output().contains("You won!"))
         }
 
         @Test
@@ -247,7 +249,7 @@ class GameServiceTest {
         }
 
         @Test
-        fun `player can complete game by inserting final correct value`() {
+        fun `pplayer can insert then overwrite then undo and still complete game`() {
             val board = SudokuFixtures.hintableBoard()
 
             val io = FakeGameIO(listOf("A1 5", "A1 2", "undo", "a1 5", "check"))
