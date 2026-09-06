@@ -13,8 +13,11 @@ import org.sudoku.domain.cell.exception.CannotInsertPreFilledCellException
 import org.sudoku.domain.move.MoveType
 import org.sudoku.domain.violation.ViolationTracker
 import org.sudoku.fixtures.SudokuFixtures
+import org.sudoku.integration.FakeGameIO
 import org.sudoku.integration.FakePuzzleGenerator
+import org.sudoku.runGame
 import kotlin.test.Test
+import kotlin.test.assertContains
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 
@@ -165,7 +168,32 @@ class GameServiceTest {
 
     @Nested
     inner class Check {
-        //TODO update test cases
+        @Test
+        fun `check returns no violations when no violation found`(){
+            val board = SudokuFixtures.noViolationBoard()
+            val puzzleGenerator = FakePuzzleGenerator(board)
+            val io = FakeGameIO(listOf("check", "quit"))
+            runGame(io, puzzleGenerator)
+            assertContains(io.output(), "No violations found.")
+        }
+
+        @Test
+        fun `check returns violations when violation found`(){
+            val board = SudokuFixtures.violatedBoard()
+            val puzzleGenerator = FakePuzzleGenerator(board)
+            val io = FakeGameIO(listOf("check", "quit"))
+            runGame(io, puzzleGenerator)
+            assertContains(io.output(), "Number 5 already exists in Row A.")
+        }
+
+        @Test
+        fun `game ends when board is filled and no violation found`(){
+            val board = SudokuFixtures.solvableBoard()
+            val puzzleGenerator = FakePuzzleGenerator(board)
+            val io = FakeGameIO(listOf("A1 5"))
+            runGame(io, puzzleGenerator)
+            assertContains(io.output(), "You won!")
+        }
     }
 
     @Test
