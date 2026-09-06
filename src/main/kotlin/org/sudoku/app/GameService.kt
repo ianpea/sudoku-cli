@@ -58,7 +58,7 @@ class GameService(
         val originalCell = board.getCellByRowAndCol(position.row, position.col)
         val originalCellCopy = originalCell.copy()
 
-        board.clear(originalCell)
+        board.clear(originalCell.position)
 
         moveService.addMove(originalCell.position, originalCellCopy.value, 0, MoveType.CLEAR)
         return CellClearedGameStatus(command.position)

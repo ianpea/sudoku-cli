@@ -132,8 +132,8 @@ class Board() {
                 .map { it.value }
         }
 
-    fun clear(cell:Cell){
-        cell.clear()
+    fun clear(position: CellPosition){
+        getCellByRowAndCol(position.row, position.col).clear()
     }
 
     companion object {
