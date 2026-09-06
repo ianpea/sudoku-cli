@@ -37,7 +37,7 @@ class GameServiceTest {
 
 
         @Test
-        fun `inserting to a pre-fill cell throws CannotInsertPreFillCellException`() {
+        fun `inserting to a pre-filled cell throws CannotInsertPreFillCellException`() {
             val moveService = MoveService()
             val gameService = GameService(moveService, expectedClueCount = 81)
             val position = CellPosition(0, 0)
