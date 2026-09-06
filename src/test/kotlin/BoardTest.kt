@@ -6,6 +6,7 @@ import org.sudoku.domain.board.exception.NumberExistsInColException
 import org.sudoku.domain.board.exception.NumberExistsInRowException
 import org.sudoku.domain.cell.CellPosition
 import org.sudoku.domain.cell.CellType
+import org.sudoku.domain.cell.exception.CannotInsertPreFilledCellException
 import kotlin.test.Test
 import kotlin.test.assertFailsWith
 import kotlin.test.assertEquals
@@ -41,7 +42,7 @@ class BoardTest {
     fun `insert rejects a pre-filled cell`() {
         val board = Board()
 
-        assertFailsWith<RuntimeException> {
+        assertFailsWith<CannotInsertPreFilledCellException> {
             board.insert(CellPosition(0, 0), 4)
         }
     }

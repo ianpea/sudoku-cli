@@ -10,16 +10,17 @@ import org.sudoku.domain.move.exception.NoMoveToUndoException
 import org.sudoku.domain.move.exception.NoMovesToShowException
 
 class MoveService {
-    var moveHistory: MutableList<Move> = mutableListOf()
-    val moveCount: Int get() = moveHistory.size
+    private var _moveHistory: MutableList<Move> = mutableListOf()
+    val moveHistory: List<Move> get() = _moveHistory
+    val moveCount: Int get() = _moveHistory.size
 
     fun addMove(position: CellPosition, previousValue: Int, newValue: Int, type: MoveType) {
-        moveHistory.add(Move(position, previousValue, newValue, type))
+        _moveHistory.add(Move(position, previousValue, newValue, type))
     }
 
     fun undo(): Move {
-        if (moveHistory.isNotEmpty()) {
-            val lastMove = moveHistory.removeLast()
+        if (_moveHistory.isNotEmpty()) {
+            val lastMove = _moveHistory.removeLast()
             return lastMove
         } else {
             throw NoMoveToUndoException()
@@ -27,8 +28,8 @@ class MoveService {
     }
 
     fun showLastMove(): GameStatus {
-        if (moveHistory.isNotEmpty()) {
-            val lastMove = moveHistory.last()
+        if (_moveHistory.isNotEmpty()) {
+            val lastMove = _moveHistory.last()
             return ShowMoveStatus(lastMove)
         }else{
             throw NoMovesToShowException()
