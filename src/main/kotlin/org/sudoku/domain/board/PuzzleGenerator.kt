@@ -70,7 +70,7 @@ class PuzzleGenerator() : BoardGenerator {
         var solutionCount = 0
 
         // This cell is already fixed, so continue to the next cell.
-        if (board.cells[index].value != 0) {
+        if (cell.value != 0) {
             return countSolution(board, index + 1)
         }
 
