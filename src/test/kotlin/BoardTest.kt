@@ -1,9 +1,9 @@
 package org.sudoku
 
 import org.sudoku.domain.board.Board
-import org.sudoku.domain.board.exception.ValueExistsInSubGridException
-import org.sudoku.domain.board.exception.ValueExistsInColException
-import org.sudoku.domain.board.exception.ValueExistsInRowException
+import org.sudoku.domain.board.exception.NumberExistsInSubGridException
+import org.sudoku.domain.board.exception.NumberExistsInColException
+import org.sudoku.domain.board.exception.NumberExistsInRowException
 import org.sudoku.domain.cell.CellPosition
 import org.sudoku.domain.cell.CellType
 import kotlin.test.Test
@@ -51,7 +51,7 @@ class BoardTest {
         val board = Board()
         board.getCellByRowAndCol(0, 1).value = 4
 
-        assertFailsWith<ValueExistsInRowException> {
+        assertFailsWith<NumberExistsInRowException> {
             board.check(board.getCellByRowAndCol(0, 0), 4)
         }
     }
@@ -61,7 +61,7 @@ class BoardTest {
         val board = Board()
         board.getCellByRowAndCol(1, 0).value = 4
 
-        assertFailsWith<ValueExistsInColException> {
+        assertFailsWith<NumberExistsInColException> {
             board.check(board.getCellByRowAndCol(0, 0), 4)
         }
     }
@@ -71,8 +71,11 @@ class BoardTest {
         val board = Board()
         board.getCellByRowAndCol(1, 1).value = 4
 
-        assertFailsWith<ValueExistsInSubGridException> {
+        assertFailsWith<NumberExistsInSubGridException> {
             board.check(board.getCellByRowAndCol(0, 0), 4)
+        }
+        assertFailsWith<NumberExistsInSubGridException> {
+            board.check(board.getCellByRowAndCol(2, 2), 4)
         }
     }
 

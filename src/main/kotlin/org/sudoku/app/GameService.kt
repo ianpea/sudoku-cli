@@ -7,7 +7,7 @@ import org.sudoku.common.status.GameStatus
 import org.sudoku.common.status.UndoSuccessStatus
 import org.sudoku.domain.board.Board
 import org.sudoku.domain.board.PuzzleGenerator
-import org.sudoku.domain.board.exception.InvalidBoardException
+import org.sudoku.domain.board.exception.PuzzleGenFailedException
 import org.sudoku.domain.move.MoveType
 
 class GameService(val moveService: MoveService, val expectedClueCount: Int = 30) {
@@ -30,7 +30,7 @@ class GameService(val moveService: MoveService, val expectedClueCount: Int = 30)
         while (true) {
             try {
                 return puzzleGenerator.generatePuzzle(expectedClueCount)
-            } catch (_: InvalidBoardException) {
+            } catch (_: PuzzleGenFailedException) {
                 // Retry puzzle generation
             }
         }

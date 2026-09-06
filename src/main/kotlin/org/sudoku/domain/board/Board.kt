@@ -3,9 +3,9 @@ package org.sudoku.domain.board
 import org.sudoku.common.status.CompletedGameStatus
 import org.sudoku.common.status.GameStatus
 import org.sudoku.domain.cell.exception.CannotInsertPreFilledCellException
-import org.sudoku.domain.board.exception.ValueExistsInSubGridException
-import org.sudoku.domain.board.exception.ValueExistsInColException
-import org.sudoku.domain.board.exception.ValueExistsInRowException
+import org.sudoku.domain.board.exception.NumberExistsInSubGridException
+import org.sudoku.domain.board.exception.NumberExistsInColException
+import org.sudoku.domain.board.exception.NumberExistsInRowException
 import org.sudoku.common.status.InsertStatus
 import org.sudoku.common.status.HintStatus
 import org.sudoku.common.status.NotCompletedGameStatus
@@ -38,18 +38,18 @@ class Board() {
 
         // row
         if (rowContents.contains(value)) {
-            throw ValueExistsInRowException("Number $value already exists in Row ${cell.position.toUserRow()}.")
+            throw NumberExistsInRowException("Number $value already exists in Row ${cell.position.toUserRow()}.")
         }
 
         // column
         if (colContents.contains(value)) {
-            throw ValueExistsInColException("Number $value already exists in Col ${cell.position.toUserCol()}.")
+            throw NumberExistsInColException("Number $value already exists in Col ${cell.position.toUserCol()}.")
         }
 
         // subgrid 3x3
         val subGridContents = getSubGrid(cell.position)
         if (subGridContents.contains(value)) {
-            throw ValueExistsInSubGridException("Number $value already exists in the same 3×3 subgrid of ${cell.position.toCoordinateString()}.")
+            throw NumberExistsInSubGridException("Number $value already exists in the same 3×3 subgrid of ${cell.position.toCoordinateString()}.")
         }
     }
 
