@@ -30,7 +30,8 @@ class GameServiceTest {
         @Test
         fun `inserting to a cell records a move`() {
             val board = Board().also { it.getCellByRowAndCol(0, 0).type = CellType.FILLABLE }
-            val gameService = GameService(moveService, FakePuzzleGenerator(board), ViolationTracker(), expectedClueCount = 81)
+            val gameService =
+                GameService(moveService, FakePuzzleGenerator(board), ViolationTracker(), expectedClueCount = 81)
             gameService.startGame()
             val position = CellPosition(0, 0)
 
@@ -47,7 +48,8 @@ class GameServiceTest {
                 it.getCellByRowAndCol(0, 0).type = CellType.PRE_FILLED
                 it.getCellByRowAndCol(0, 0).value = 0
             }
-            val gameService = GameService(moveService, FakePuzzleGenerator(board), ViolationTracker(), expectedClueCount = 81)
+            val gameService =
+                GameService(moveService, FakePuzzleGenerator(board), ViolationTracker(), expectedClueCount = 81)
             gameService.startGame()
             val position = CellPosition(0, 0)
 
@@ -64,7 +66,8 @@ class GameServiceTest {
             val position = CellPosition(0, 0)
             val board =
                 Board().also { it.getCellByRowAndCol(position.row, position.col).type = CellType.FILLABLE }
-            val gameService = GameService(moveService, FakePuzzleGenerator(board), ViolationTracker(), expectedClueCount = 81)
+            val gameService =
+                GameService(moveService, FakePuzzleGenerator(board), ViolationTracker(), expectedClueCount = 81)
             gameService.startGame()
             gameService.insert(InsertCommand(position, 5))
             assertEquals(5, gameService.board.getCellByRowAndCol(0, 0).value)
@@ -85,7 +88,8 @@ class GameServiceTest {
                 it.getCellByRowAndCol(position.row, position.col).type = CellType.FILLABLE
                 it.getCellByRowAndCol(position.row, position.col).value = 5
             }
-            val gameService = GameService(moveService, FakePuzzleGenerator(board), ViolationTracker(), expectedClueCount = 81)
+            val gameService =
+                GameService(moveService, FakePuzzleGenerator(board), ViolationTracker(), expectedClueCount = 81)
             gameService.startGame()
             gameService.clear(ClearCommand(position))
             assertEquals(0, gameService.board.getCellByRowAndCol(0, 0).value)
@@ -107,7 +111,8 @@ class GameServiceTest {
                 it.getCellByRowAndCol(0, 0).type = CellType.FILLABLE
                 it.getCellByRowAndCol(0, 0).value = 5
             }
-            val gameService = GameService(moveService, FakePuzzleGenerator(board), ViolationTracker(), expectedClueCount = 81)
+            val gameService =
+                GameService(moveService, FakePuzzleGenerator(board), ViolationTracker(), expectedClueCount = 81)
             gameService.startGame()
 
             gameService.clear(ClearCommand(CellPosition(0, 0)))
@@ -123,7 +128,8 @@ class GameServiceTest {
                 it.getCellByRowAndCol(0, 0).type = CellType.FILLABLE
                 it.getCellByRowAndCol(0, 0).value = 0
             }
-            val gameService = GameService(moveService, FakePuzzleGenerator(board), ViolationTracker(), expectedClueCount = 81)
+            val gameService =
+                GameService(moveService, FakePuzzleGenerator(board), ViolationTracker(), expectedClueCount = 81)
             gameService.startGame()
 
             assertFailsWith<CannotClearEmptyCellException> {
@@ -139,7 +145,8 @@ class GameServiceTest {
                 it.getCellByRowAndCol(0, 0).type = CellType.PRE_FILLED
                 it.getCellByRowAndCol(0, 0).value = 0
             }
-            val gameService = GameService(moveService, FakePuzzleGenerator(board), ViolationTracker(), expectedClueCount = 81)
+            val gameService =
+                GameService(moveService, FakePuzzleGenerator(board), ViolationTracker(), expectedClueCount = 81)
             gameService.startGame()
 
             assertFailsWith<CannotClearPreFilledCellException> {
@@ -169,7 +176,7 @@ class GameServiceTest {
     @Nested
     inner class Check {
         @Test
-        fun `check returns no violations when no violation found`(){
+        fun `check returns no violations when no violation found`() {
             val board = SudokuFixtures.noViolationBoard()
             val puzzleGenerator = FakePuzzleGenerator(board)
             val io = FakeGameIO(listOf("check", "quit"))
@@ -178,14 +185,35 @@ class GameServiceTest {
         }
 
         @Test
-        fun `check returns violations when violation found`(){
-            val board = SudokuFixtures.violatedBoard()
+        fun `row check returns violations when violation found`() {
+            val board = SudokuFixtures.rowViolatedBoard()
             val puzzleGenerator = FakePuzzleGenerator(board)
             val io = FakeGameIO(listOf("check", "quit"))
             runGame(io, puzzleGenerator)
             assertContains(io.output(), "Number 5 already exists in Row A.")
         }
 
+        @Test
+        fun `col check returns violations when violation found`() {
+            val board = SudokuFixtures.colViolatedBoard()
+            val puzzleGenerator = FakePuzzleGenerator(board)
+            val io = FakeGameIO(listOf("check", "quit"))
+            runGame(io, puzzleGenerator)
+            assertContains(io.output(), "Number 5 already exists in Column 1.")
+        }
+
+        @Test
+        fun `subgrid check returns violations when violation found`() {
+            val board = SudokuFixtures.subgridViolatedBoard()
+            val puzzleGenerator = FakePuzzleGenerator(board)
+            val io = FakeGameIO(listOf("check", "quit"))
+            runGame(io, puzzleGenerator)
+            assertContains(io.output(), "Number 5 already exists in the same 3x3 subgrid #1.")
+        }
+    }
+
+    @Nested
+    inner class GameFlow{
         @Test
         fun `game ends when board is filled and no violation found`(){
             val board = SudokuFixtures.solvableBoard()
@@ -194,19 +222,39 @@ class GameServiceTest {
             runGame(io, puzzleGenerator)
             assertContains(io.output(), "You won!")
         }
-    }
 
-    @Test
-    fun `game service requires at least 17 clues`() {
-        assertFailsWith<IllegalArgumentException> {
-            GameService(MoveService(), FakePuzzleGenerator(Board()), ViolationTracker(), expectedClueCount = 16)
+        @Test
+        fun `game does not end when board is full but contains violation`() {
+            val board = SudokuFixtures.fullViolatedBoard()
+            val puzzleGenerator = FakePuzzleGenerator(board)
+            val io = FakeGameIO(listOf("check", "quit"))
+            runGame(io, puzzleGenerator)
+            assertContains(io.output(), "Number 4 already exists in Row A.")
         }
-    }
 
-    @Test
-    fun `game requires at most 81 clues`() {
-        assertFailsWith<IllegalArgumentException> {
-            GameService(MoveService(), FakePuzzleGenerator(Board()), ViolationTracker(), expectedClueCount = 82)
+        @Test
+        fun `game service requires at least 17 clues`() {
+            assertFailsWith<IllegalArgumentException> {
+                GameService(MoveService(), FakePuzzleGenerator(Board()), ViolationTracker(), expectedClueCount = 16)
+            }
+        }
+
+        @Test
+        fun `game requires at most 81 clues`() {
+            assertFailsWith<IllegalArgumentException> {
+                GameService(MoveService(), FakePuzzleGenerator(Board()), ViolationTracker(), expectedClueCount = 82)
+            }
+        }
+
+        @Test
+        fun `player can complete game by inserting final correct value`() {
+            val board = SudokuFixtures.hintableBoard()
+
+            val io = FakeGameIO(listOf("A1 5", "A1 2", "undo", "a1 5", "check"))
+            runGame(io, FakePuzzleGenerator(board))
+
+            val output = io.output()
+            assertContains(output, "You won!")
         }
     }
 

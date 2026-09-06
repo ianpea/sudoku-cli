@@ -28,20 +28,17 @@ class Board() {
         // row
         if (rowContents.contains(value)) {
             return false
-//            throw NumberExistsInRowException(Violation(ViolationType.ROW, row * SIZE + col, value))
         }
 
         // column
         if (colContents.contains(value)) {
             return false
-//            throw NumberExistsInColException(Violation(ViolationType.COLUMN, row * SIZE + col, value))
         }
 
         // subgrid 3x3
         val subGridContents = getSubGrid(position)
         if (subGridContents.contains(value)) {
             return false
-//            throw NumberExistsInSubGridException(Violation(ViolationType.SUBGRID, row * SIZE + col, value))
         }
         return true
     }
@@ -76,9 +73,9 @@ class Board() {
         return boxContents
     }
 
-    fun isFullBoard(): Boolean {
-        return cells.none({ it.type == CellType.FILLABLE && it.value == 0 })
-    }
+    fun isFullBoard(): Boolean =
+        cells.none { it.type == CellType.FILLABLE && it.value == 0 }
+
 
     fun hint(): GameStatus {
         val emptyCells = cells.filter({ it.type == CellType.FILLABLE && it.value == 0 })
@@ -125,7 +122,7 @@ class Board() {
                 .map { it.value }
         }
 
-    fun clear(position: CellPosition){
+    fun clear(position: CellPosition) {
         getCellByRowAndCol(position.row, position.col).clear()
     }
 

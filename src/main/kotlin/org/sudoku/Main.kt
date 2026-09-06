@@ -69,7 +69,7 @@ fun runGame(io: GameIO, puzzleGenerator: BoardGenerator = PuzzleGenerator()) {
                 ExitCommand -> {
                     // Game end
                     renderer.renderStatusOnly(SessionEndedGameStatus())
-                    break
+                    return
                 }
 
                 HintCommand -> {
