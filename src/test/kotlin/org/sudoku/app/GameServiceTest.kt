@@ -235,7 +235,7 @@ class GameServiceTest {
         }
 
         @Test
-        fun `game service requires at least 17 clues`() {
+        fun `game service requires at least 30 clues`() {
             assertFailsWith<IllegalArgumentException> {
                 GameService(MoveService(), FakePuzzleGenerator(Board()), ViolationTracker(), expectedClueCount = 16)
             }
@@ -249,7 +249,7 @@ class GameServiceTest {
         }
 
         @Test
-        fun `pplayer can insert then overwrite then undo and still complete game`() {
+        fun `player can insert then overwrite then undo and still complete game`() {
             val board = SudokuFixtures.hintableBoard()
 
             val io = FakeGameIO(listOf("A1 5", "A1 2", "undo", "a1 5", "check"))

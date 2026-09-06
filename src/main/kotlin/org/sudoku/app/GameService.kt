@@ -22,7 +22,7 @@ class GameService(
     val expectedClueCount: Int = 30
 ) {
     init {
-        require(expectedClueCount in 23..Board.CELL_COUNT) {
+        require(expectedClueCount in Board.MIN_CLUE_COUNT..Board.CELL_COUNT) {
             "Expected clue count must be between ${Board.MIN_CLUE_COUNT} and ${Board.CELL_COUNT}."
         }
     }
