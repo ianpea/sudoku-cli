@@ -45,16 +45,16 @@ inserts `5` into cell A3.
 
 Supported commands:
 
-| Command      | Description                                        |
-|--------------|----------------------------------------------------|
-| `A3 5`       | Insert `5` into cell A3                            |
-| `A3 clear`   | Clear the value in cell A3                         |
-| `hint`       | Reveal a correct value for an empty cell           |
-| `check`      | Check the current board for Sudoku rule violations |
-| `undo`       | Undo the previous move                             |
-| `last`       | Show the previous move                             |
-| `violations` | Check the board for Sudoku rule violations         |
-| `exit`       | End the game                                       |
+| Command      | Description                                                       |
+|--------------|-------------------------------------------------------------------|
+| `A3 5`       | Insert `5` into cell A3                                           |
+| `A3 clear`   | Clear the value in cell A3                                        |
+| `hint`       | Reveal the correct value for one empty cell (without placing it). |
+| `check`      | Check the current board for Sudoku rule violations                |
+| `undo`       | Undo the previous move                                            |
+| `last`       | Show the previous move                                            |
+| `violations` | Check the board for Sudoku rule violations                        |
+| `exit`       | End the game                                                      |
 
 Commands and coordinates are case-insensitive.
 
