@@ -22,8 +22,9 @@ class GameService(
     val expectedClueCount: Int = 30
 ) {
     init {
-        require(expectedClueCount in 17..Board.CELL_COUNT) {
-            "\n\n********* \n\nA standard 9x9 Sudoku with a unique solution requires at least 17 clues.\n" + "Proof here => https://arxiv.org/abs/1201.0749 \n\n*********\n"
+        require(expectedClueCount in 23..Board.CELL_COUNT) {
+            "Expected clue count must be between 23 and ${Board.CELL_COUNT}. " +
+                    "The minimum is limited to 23 to keep puzzle generation time practical."
         }
     }
 
