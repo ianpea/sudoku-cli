@@ -23,7 +23,7 @@ import org.sudoku.common.status.CompletedGameStatus
 fun main() {
     // Game instantiation
     val moveService = MoveService()
-    val gameService = GameService(moveService, 79)
+    val gameService = GameService(moveService, 30)
     gameService.startGame()
     val renderer = Renderer(gameService.board)
     val commandParser = CommandParser(Board.MAX_ROW_ALPHABET)

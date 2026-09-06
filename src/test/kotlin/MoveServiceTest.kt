@@ -13,7 +13,7 @@ class MoveServiceTest {
     private val position = CellPosition(1, 2)
 
     @Test
-    fun `move count depends on current moveHIstory count`(){
+    fun `move count depends on current moveHistory count`(){
 
         val service = MoveService()
 
