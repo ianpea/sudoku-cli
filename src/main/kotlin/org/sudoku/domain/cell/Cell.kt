@@ -10,7 +10,6 @@ data class Cell(
     var value: Int = 0,
     var solution: Int = 0
 ) {
-
     fun clear() {
         if (type == CellType.FILLABLE) {
             if (value != 0) {
