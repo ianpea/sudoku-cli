@@ -84,7 +84,10 @@ class CommandParser(val maxRowAlphabet: Char) {
             throw InvalidInputException("Invalid input '$input'.")
         } else {
             // clear input
-            return Cell(CellPosition(row = row, col = col))
+            if(part2Raw == "CLEAR"){
+                return Cell(CellPosition(row = row, col = col))
+            }
+            throw InvalidInputException("Invalid input '$input'.")
         }
     }
 }

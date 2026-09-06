@@ -32,7 +32,7 @@ data class Cell(
     }
 }
 
-data class CellPosition(var row: Int, var col: Int) {
+data class CellPosition(val row: Int, val col: Int) {
     fun toCoordinateString(): String =
         "${'A' + row}${col + 1}"
 
