@@ -119,7 +119,7 @@ Do you know that **a standard 9x9 Sudoku with a unique solution cannot
 contain fewer than 17 clues** as proven [here](https://arxiv.org/pdf/1201.0749)
 Generally, published puzzles aimed at human solvers rarely go below 22 clues, as mentioned [here](https://sudoku.by/sudoku-faq/minimum-clues).
 
-This application restricts the configured clue count to a minimum bound of 23, to keep puzzle generation time **practical**.
+*This application restricts the configured clue count to a minimum bound of **30**.
 
 ## Design and Architecture
 

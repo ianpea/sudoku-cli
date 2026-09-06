@@ -23,8 +23,7 @@ class GameService(
 ) {
     init {
         require(expectedClueCount in 23..Board.CELL_COUNT) {
-            "Expected clue count must be between 23 and ${Board.CELL_COUNT}. " +
-                    "The minimum is limited to 23 to keep puzzle generation time practical."
+            "Expected clue count must be between ${Board.MIN_CLUE_COUNT} and ${Board.CELL_COUNT}."
         }
     }
 

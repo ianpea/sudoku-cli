@@ -131,6 +131,6 @@ class Board() {
         const val BOX_SIZE = 3
         const val CELL_COUNT = SIZE * SIZE
         const val MAX_ROW_ALPHABET = 'I'
-
+        const val MIN_CLUE_COUNT = 30
     }
 }
