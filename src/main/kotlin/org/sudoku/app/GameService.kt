@@ -4,13 +4,16 @@ import org.sudoku.cli.input.ClearCommand
 import org.sudoku.cli.input.InsertCommand
 import org.sudoku.common.status.CellClearedGameStatus
 import org.sudoku.common.status.GameStatus
+import org.sudoku.common.status.ShowViolationsGameStatus
 import org.sudoku.common.status.UndoSuccessStatus
 import org.sudoku.domain.board.Board
 import org.sudoku.domain.board.BoardGenerator
 import org.sudoku.domain.board.exception.PuzzleGenFailedException
+import org.sudoku.domain.board.exception.ViolationException
 import org.sudoku.domain.move.MoveType
+import org.sudoku.domain.violation.ViolationTrackerService
 
-class GameService(val moveService: MoveService, val puzzleGenerator: BoardGenerator, val expectedClueCount: Int = 30) {
+class GameService(val moveService: MoveService, val puzzleGenerator: BoardGenerator, val violationTrackerService: ViolationTrackerService = ViolationTrackerService(), val expectedClueCount: Int = 30) {
     init {
         require(expectedClueCount in 17..Board.CELL_COUNT) {
             "\n\n********* \n\nA standard 9x9 Sudoku with a unique solution requires at least 17 clues.\n" + "Proof here => https://arxiv.org/abs/1201.0749 \n\n*********\n"
@@ -39,7 +42,12 @@ class GameService(val moveService: MoveService, val puzzleGenerator: BoardGenera
     fun insert(command: InsertCommand): GameStatus {
         val originalCell = board.getCellByRowAndCol(command.position.row, command.position.col).copy()
 
-        val status = board.insert(command.position, command.value)
+        val status = try {
+            board.insert(command.position, command.value)
+        } catch (e: ViolationException) {
+            violationTrackerService.add(e.violation)
+            throw e
+        }
 
         moveService.addMove(originalCell.position, originalCell.value, command.value, MoveType.INSERT)
         return status
@@ -58,6 +66,10 @@ class GameService(val moveService: MoveService, val puzzleGenerator: BoardGenera
 
     fun check(): GameStatus {
         return board.checkWinStatus(moveService.moveCount, hintsUsed)
+    }
+
+    fun violations(): GameStatus {
+        return ShowViolationsGameStatus(violationTrackerService.violations)
     }
 
     fun hint(): GameStatus {

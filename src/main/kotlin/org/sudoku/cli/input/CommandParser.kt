@@ -33,6 +33,10 @@ class CommandParser(val maxRowAlphabet: Char) {
                 ShowLastMoveCommand
             }
 
+            input == "VIOLATIONS" ->{
+                ShowViolationsCommand
+            }
+
             else -> {
                 parseInsertCommand(input)
             }

@@ -1,6 +1,5 @@
 package org.sudoku.domain.board.exception
 
-import org.sudoku.common.SudokuException
+import org.sudoku.domain.violation.Violation
 
-class NumberExistsInSubGridException(override val message: String): SudokuException(message) {
-}
+class NumberExistsInSubGridException(violation: Violation) : ViolationException(violation)

@@ -14,6 +14,8 @@ import org.sudoku.domain.cell.CellPosition
 import org.sudoku.domain.cell.CellType
 import org.sudoku.domain.board.exception.NoHintLeftException
 import org.sudoku.common.SudokuException
+import org.sudoku.domain.violation.Violation
+import org.sudoku.domain.violation.ViolationType
 
 class Board() {
     val cellCount: Int = CELL_COUNT
@@ -38,18 +40,18 @@ class Board() {
 
         // row
         if (rowContents.contains(value)) {
-            throw NumberExistsInRowException("Number $value already exists in Row ${cell.position.toUserRow()}.")
+            throw NumberExistsInRowException(Violation(ViolationType.ROW, value, row, col))
         }
 
         // column
         if (colContents.contains(value)) {
-            throw NumberExistsInColException("Number $value already exists in Col ${cell.position.toUserCol()}.")
+            throw NumberExistsInColException(Violation(ViolationType.COLUMN, value, row, col))
         }
 
         // subgrid 3x3
         val subGridContents = getSubGrid(cell.position)
         if (subGridContents.contains(value)) {
-            throw NumberExistsInSubGridException("Number $value already exists in the same 3×3 subgrid of ${cell.position.toCoordinateString()}.")
+            throw NumberExistsInSubGridException(Violation(ViolationType.SUBGRID, value, row, col))
         }
     }
 

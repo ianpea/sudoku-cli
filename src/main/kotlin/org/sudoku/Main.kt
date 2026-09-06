@@ -13,6 +13,7 @@ import org.sudoku.cli.Renderer
 import org.sudoku.cli.input.ConsoleGameIO
 import org.sudoku.cli.input.GameIO
 import org.sudoku.cli.input.ShowLastMoveCommand
+import org.sudoku.cli.input.ShowViolationsCommand
 import org.sudoku.cli.input.UndoCommand
 import org.sudoku.common.status.ErrorStatus
 import org.sudoku.common.status.SessionEndedGameStatus
@@ -32,7 +33,7 @@ fun main() {
 fun runGame(io: GameIO, puzzleGenerator: BoardGenerator = PuzzleGenerator()){
     // Game instantiation
     val moveService = MoveService()
-    val gameService = GameService(moveService, puzzleGenerator, 30)
+    val gameService = GameService(moveService, puzzleGenerator)
     gameService.startGame()
     val renderer = Renderer(gameService.board, io)
     val commandParser = CommandParser(Board.MAX_ROW_ALPHABET)
@@ -79,6 +80,10 @@ fun runGame(io: GameIO, puzzleGenerator: BoardGenerator = PuzzleGenerator()){
 
                 ShowLastMoveCommand -> {
                     moveService.showLastMove()
+                }
+
+                ShowViolationsCommand -> {
+                    gameService.violations()
                 }
 
             }
