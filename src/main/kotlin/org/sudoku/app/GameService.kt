@@ -64,7 +64,6 @@ class GameService(val moveService: MoveService, val expectedClueCount: Int = 30)
 
     fun check(): GameStatus {
         return board.checkWinStatus(moveService.moveCount, hintsUsed)
-
     }
 
     fun hint(): GameStatus {
