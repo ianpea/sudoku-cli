@@ -13,6 +13,17 @@ class MoveServiceTest {
     private val position = CellPosition(1, 2)
 
     @Test
+    fun `move count depends on current moveHIstory count`(){
+
+        val service = MoveService()
+
+        service.addMove(position, 0, 5, MoveType.INSERT)
+        service.addMove(position, 0, 4, MoveType.INSERT)
+
+        assertEquals(2, service.moveCount)
+    }
+
+    @Test
     fun `add move records history and increments count`() {
         val service = MoveService()
 
