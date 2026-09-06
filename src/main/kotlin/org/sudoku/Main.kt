@@ -10,6 +10,8 @@ import org.sudoku.cli.input.HintCommand
 import org.sudoku.cli.input.InsertCommand
 import org.sudoku.cli.exception.ParserException
 import org.sudoku.cli.Renderer
+import org.sudoku.cli.input.ConsoleGameIO
+import org.sudoku.cli.input.GameIO
 import org.sudoku.cli.input.ShowLastMoveCommand
 import org.sudoku.cli.input.UndoCommand
 import org.sudoku.common.status.ErrorStatus
@@ -18,16 +20,21 @@ import org.sudoku.common.status.GameStatus
 import org.sudoku.domain.board.Board
 import org.sudoku.common.SudokuException
 import org.sudoku.common.status.CompletedGameStatus
+import org.sudoku.domain.board.BoardGenerator
 import org.sudoku.domain.board.PuzzleGenerator
 
 
 fun main() {
+    val io = ConsoleGameIO()
+    runGame(io)
+}
+
+fun runGame(io: GameIO, puzzleGenerator: BoardGenerator = PuzzleGenerator()){
     // Game instantiation
     val moveService = MoveService()
-    val puzzleGenerator = PuzzleGenerator()
     val gameService = GameService(moveService, puzzleGenerator, 30)
     gameService.startGame()
-    val renderer = Renderer(gameService.board)
+    val renderer = Renderer(gameService.board, io)
     val commandParser = CommandParser(Board.MAX_ROW_ALPHABET)
 
     var gameStatusMessage: GameStatus?
@@ -38,7 +45,7 @@ fun main() {
 
     // Game loop
     while (true) {
-        val input = readln().trim()
+        val input = io.read()
 
         try {
             val command = commandParser.parse(input)
