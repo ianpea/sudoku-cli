@@ -6,30 +6,30 @@ import org.sudoku.domain.cell.CellPosition
 
 class CommandParser(val maxRowAlphabet: Char) {
     fun parse(rawInput: String): GameCommand {
-        val input = rawInput.trim().lowercase()
+        val input = rawInput.trim().uppercase()
 
         return when {
-            input == "quit" || input == "exit" -> {
+            input == "QUIT" || input == "EXIT" -> {
                 ExitCommand
             }
 
-            input == "check" -> {
+            input == "CHECK" -> {
                 CheckCommand
             }
 
-            input.contains("clear") -> {
+            input.contains("CLEAR") -> {
                 parseClearCommand(input)
             }
 
-            input.contains("hint") -> {
+            input =="HINT" -> {
                 HintCommand
             }
 
-            input.contains("undo") -> {
+            input == "UNDO" -> {
                 UndoCommand
             }
 
-            input.contains("lastmove") ->{
+            input == "LASTMOVE" ->{
                 ShowLastMoveCommand
             }
 
@@ -65,6 +65,9 @@ class CommandParser(val maxRowAlphabet: Char) {
         val (part1Raw, part2Raw) = parts
         val rowChar = part1Raw[0].uppercaseChar()
         val row = rowChar - 'A'
+        if(part1Raw.length != 2){
+            throw InvalidInputException("Invalid input '$input'.")
+        }
         val col = part1Raw[1].digitToIntOrNull()
 
         val part2 = part2Raw.toIntOrNull()
