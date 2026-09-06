@@ -1,4 +1,4 @@
-package org.sudoku
+package org.sudoku.app
 
 import org.sudoku.domain.board.Board
 import org.sudoku.domain.board.PuzzleGenerator

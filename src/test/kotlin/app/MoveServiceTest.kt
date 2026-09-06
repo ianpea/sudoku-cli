@@ -1,6 +1,5 @@
-package org.sudoku
+package org.sudoku.app
 
-import org.sudoku.app.MoveService
 import org.sudoku.domain.cell.CellPosition
 import org.sudoku.domain.move.MoveType
 import org.sudoku.domain.move.exception.NoMoveToUndoException

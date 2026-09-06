@@ -5,8 +5,8 @@ import org.sudoku.domain.board.exception.PuzzleGenFailedException
 import org.sudoku.common.SudokuException
 import org.sudoku.domain.cell.CellType
 
-class PuzzleGenerator() {
-    fun generatePuzzle(expectedClueCount: Int = 30): Board {
+class PuzzleGenerator() : BoardGenerator {
+    override fun generatePuzzle(expectedClueCount: Int): Board {
         val board = Board()
         fillBoard(board)
         // With a full board use backtrack to generate a 1 unique solution board.
@@ -76,8 +76,7 @@ class PuzzleGenerator() {
             return countSolution(board, index + 1)
         }
 
-        // All your multiverse starts here:
-        // each valid value creates a different possible branch.
+        // Each valid candidate creates a separate solution branch.
         for (value in (1..Board.SIZE).shuffled()) {
             try {
                 board.check(cell, value)

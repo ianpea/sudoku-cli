@@ -6,27 +6,27 @@ import org.sudoku.common.status.CellClearedGameStatus
 import org.sudoku.common.status.GameStatus
 import org.sudoku.common.status.UndoSuccessStatus
 import org.sudoku.domain.board.Board
-import org.sudoku.domain.board.PuzzleGenerator
+import org.sudoku.domain.board.BoardGenerator
 import org.sudoku.domain.board.exception.PuzzleGenFailedException
 import org.sudoku.domain.move.MoveType
 
-class GameService(val moveService: MoveService, val expectedClueCount: Int = 30) {
-
+class GameService(val moveService: MoveService, val puzzleGenerator: BoardGenerator, val expectedClueCount: Int = 30) {
     init {
         require(expectedClueCount in 17..Board.CELL_COUNT) {
             "\n\n********* \n\nA standard 9x9 Sudoku with a unique solution requires at least 17 clues.\n" + "Proof here => https://arxiv.org/abs/1201.0749 \n\n*********\n"
         }
     }
 
-    val puzzleGenerator = PuzzleGenerator()
     lateinit var board: Board
-    var hintsUsed = 0
+        private set
+    var hintsUsed: Int = 0
+        private set
 
     fun startGame() {
-        board = generateBoard(puzzleGenerator)
+        board = generateBoard()
     }
 
-    fun generateBoard(puzzleGenerator: PuzzleGenerator): Board {
+    fun generateBoard(): Board {
         while (true) {
             try {
                 return puzzleGenerator.generatePuzzle(expectedClueCount)
@@ -37,27 +37,21 @@ class GameService(val moveService: MoveService, val expectedClueCount: Int = 30)
     }
 
     fun insert(command: InsertCommand): GameStatus {
-        // Get original copy
         val originalCell = board.getCellByRowAndCol(command.position.row, command.position.col).copy()
 
-        // Perform input
         val status = board.insert(command.position, command.value)
 
-        // Add move once input succeeds
         moveService.addMove(originalCell.position, originalCell.value, command.value, MoveType.INSERT)
         return status
     }
 
     fun clear(command: ClearCommand): GameStatus {
-        // Get original copy
         val position = command.position
         val originalCell = board.getCellByRowAndCol(position.row, position.col)
         val originalCellCopy = originalCell.copy()
 
-        // Perform input
         originalCell.clear()
 
-        // Add move once input succeeds
         moveService.addMove(originalCell.position, originalCellCopy.value, 0, MoveType.CLEAR)
         return CellClearedGameStatus(command.position)
     }

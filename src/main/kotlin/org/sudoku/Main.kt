@@ -18,12 +18,14 @@ import org.sudoku.common.status.GameStatus
 import org.sudoku.domain.board.Board
 import org.sudoku.common.SudokuException
 import org.sudoku.common.status.CompletedGameStatus
+import org.sudoku.domain.board.PuzzleGenerator
 
 
 fun main() {
     // Game instantiation
     val moveService = MoveService()
-    val gameService = GameService(moveService, 30)
+    val puzzleGenerator = PuzzleGenerator()
+    val gameService = GameService(moveService, puzzleGenerator, 30)
     gameService.startGame()
     val renderer = Renderer(gameService.board)
     val commandParser = CommandParser(Board.MAX_ROW_ALPHABET)

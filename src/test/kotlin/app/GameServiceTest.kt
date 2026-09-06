@@ -1,8 +1,6 @@
-package org.sudoku
+package org.sudoku.app
 
 import org.junit.jupiter.api.Nested
-import org.sudoku.app.GameService
-import org.sudoku.app.MoveService
 import org.sudoku.cli.input.ClearCommand
 import org.sudoku.cli.input.InsertCommand
 import org.sudoku.common.status.CompletedGameStatus
@@ -16,20 +14,23 @@ import org.sudoku.domain.cell.exception.CannotClearPreFilledCellException
 import org.sudoku.domain.cell.exception.CannotInsertPreFilledCellException
 import org.sudoku.domain.move.MoveType
 import org.sudoku.fixtures.SudokuFixtures
+import org.sudoku.integration.FakePuzzleGenerator
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 
 class GameServiceTest {
 
+    val moveService = MoveService()
+
     @Nested
     inner class Insert {
         @Test
         fun `inserting to a cell records a move`() {
-            val moveService = MoveService()
-            val gameService = GameService(moveService, expectedClueCount = 81)
+            val board = Board().also { it.getCellByRowAndCol(0, 0).type = CellType.FILLABLE }
+            val gameService = GameService(moveService, FakePuzzleGenerator(board), expectedClueCount = 81)
+            gameService.startGame()
             val position = CellPosition(0, 0)
-            gameService.board = Board().also { it.getCellByRowAndCol(0, 0).type = CellType.FILLABLE }
 
             gameService.insert(InsertCommand(position, 5))
 
@@ -40,13 +41,13 @@ class GameServiceTest {
 
         @Test
         fun `inserting to a pre-filled cell throws CannotInsertPreFillCellException`() {
-            val moveService = MoveService()
-            val gameService = GameService(moveService, expectedClueCount = 81)
-            val position = CellPosition(0, 0)
-            gameService.board = Board().also {
+            val board = Board().also {
                 it.getCellByRowAndCol(0, 0).type = CellType.PRE_FILLED
                 it.getCellByRowAndCol(0, 0).value = 0
             }
+            val gameService = GameService(moveService, FakePuzzleGenerator(board), expectedClueCount = 81)
+            gameService.startGame()
+            val position = CellPosition(0, 0)
 
             assertFailsWith<CannotInsertPreFilledCellException> {
                 gameService.insert(InsertCommand(position, 1))
@@ -58,11 +59,11 @@ class GameServiceTest {
     inner class Undo {
         @Test
         fun `undoing an insert removes a move and restores the previous value`() {
-            val moveService = MoveService()
-            val gameService = GameService(moveService, expectedClueCount = 81)
             val position = CellPosition(0, 0)
-            gameService.board =
+            val board =
                 Board().also { it.getCellByRowAndCol(position.row, position.col).type = CellType.FILLABLE }
+            val gameService = GameService(moveService, FakePuzzleGenerator(board), expectedClueCount = 81)
+            gameService.startGame()
             gameService.insert(InsertCommand(position, 5))
             assertEquals(5, gameService.board.getCellByRowAndCol(0, 0).value)
             assertEquals(1, moveService.moveHistory.size)
@@ -77,13 +78,13 @@ class GameServiceTest {
         @Test
         fun `undoing a clear removes a move and restores the previous value`() {
             val moveService = MoveService()
-            val gameService = GameService(moveService, expectedClueCount = 81)
             val position = CellPosition(0, 0)
-            gameService.board =
-                Board().also {
-                    it.getCellByRowAndCol(position.row, position.col).type = CellType.FILLABLE
-                    it.getCellByRowAndCol(position.row, position.col).value = 5
-                }
+            val board = Board().also {
+                it.getCellByRowAndCol(position.row, position.col).type = CellType.FILLABLE
+                it.getCellByRowAndCol(position.row, position.col).value = 5
+            }
+            val gameService = GameService(moveService, FakePuzzleGenerator(board), expectedClueCount = 81)
+            gameService.startGame()
             gameService.clear(ClearCommand(position))
             assertEquals(0, gameService.board.getCellByRowAndCol(0, 0).value)
             assertEquals(1, moveService.moveHistory.size)
@@ -100,11 +101,12 @@ class GameServiceTest {
         @Test
         fun `clearing a filled cell makes it zero`() {
             val moveService = MoveService()
-            val gameService = GameService(moveService, expectedClueCount = 81)
-            gameService.board = Board().also {
+            val board = Board().also {
                 it.getCellByRowAndCol(0, 0).type = CellType.FILLABLE
                 it.getCellByRowAndCol(0, 0).value = 5
             }
+            val gameService = GameService(moveService, FakePuzzleGenerator(board), expectedClueCount = 81)
+            gameService.startGame()
 
             gameService.clear(ClearCommand(CellPosition(0, 0)))
 
@@ -114,12 +116,13 @@ class GameServiceTest {
         @Test
         fun `clearing an empty cell throws CannotClearEmptyCellException`() {
             val moveService = MoveService()
-            val gameService = GameService(moveService, expectedClueCount = 81)
             val position = CellPosition(0, 0)
-            gameService.board = Board().also {
+            val board = Board().also {
                 it.getCellByRowAndCol(0, 0).type = CellType.FILLABLE
                 it.getCellByRowAndCol(0, 0).value = 0
             }
+            val gameService = GameService(moveService, FakePuzzleGenerator(board), expectedClueCount = 81)
+            gameService.startGame()
 
             assertFailsWith<CannotClearEmptyCellException> {
                 gameService.clear(ClearCommand(position))
@@ -129,12 +132,13 @@ class GameServiceTest {
         @Test
         fun `clearing a pre-fill cell throws CannotClearPreFillCellException`() {
             val moveService = MoveService()
-            val gameService = GameService(moveService, expectedClueCount = 81)
             val position = CellPosition(0, 0)
-            gameService.board = Board().also {
+            val board = Board().also {
                 it.getCellByRowAndCol(0, 0).type = CellType.PRE_FILLED
                 it.getCellByRowAndCol(0, 0).value = 0
             }
+            val gameService = GameService(moveService, FakePuzzleGenerator(board), expectedClueCount = 81)
+            gameService.startGame()
 
             assertFailsWith<CannotClearPreFilledCellException> {
                 gameService.clear(ClearCommand(position))
@@ -180,14 +184,14 @@ class GameServiceTest {
     @Test
     fun `game service requires at least 17 clues`() {
         assertFailsWith<IllegalArgumentException> {
-            GameService(MoveService(), expectedClueCount = 16)
+            GameService(MoveService(), FakePuzzleGenerator(Board()), expectedClueCount = 16)
         }
     }
 
     @Test
     fun `game requires at most 81 clues`() {
         assertFailsWith<IllegalArgumentException> {
-            GameService(MoveService(), 82)
+            GameService(MoveService(), FakePuzzleGenerator(Board()), expectedClueCount = 82)
         }
     }
 

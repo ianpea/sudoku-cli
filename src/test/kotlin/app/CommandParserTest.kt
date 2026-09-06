@@ -1,4 +1,4 @@
-package org.sudoku
+package org.sudoku.app
 
 import org.sudoku.cli.exception.InvalidInputException
 import org.sudoku.cli.input.CheckCommand
