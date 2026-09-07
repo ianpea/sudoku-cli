@@ -8,11 +8,11 @@ import org.sudoku.domain.cell.CellType
 
 class Renderer(val board: Board, val io: GameIO) {
     fun render(gameStatus: GameStatus?) {
-        printColumnHeader(board)
-        printHorizontalBorder(board)
+        printColumnHeader()
+        printHorizontalBorder()
 
         for (cell in board.cells) {
-            printCell(board, cell)
+            printCell(cell)
         }
 
         io.println()
@@ -39,13 +39,13 @@ class Renderer(val board: Board, val io: GameIO) {
         )
     }
 
-    private fun printColumnHeader(board: Board) {
+    private fun printColumnHeader() {
         io.print("  |")
 
         for (col in 1..Board.SIZE) {
             io.print(col)
 
-            if (col % board.boxSize == 0) {
+            if (col % Board.BOX_SIZE == 0) {
                 io.print("|")
             } else {
                 io.print(" ")
@@ -55,7 +55,7 @@ class Renderer(val board: Board, val io: GameIO) {
         io.println()
     }
 
-    private fun printCell(board: Board, cell: Cell) {
+    private fun printCell(cell: Cell) {
         val row = cell.position.row
         val col = cell.position.col
 
@@ -64,13 +64,13 @@ class Renderer(val board: Board, val io: GameIO) {
         }
 
         printCellValue(cell)
-        printCellSeparator(board, col)
+        printCellSeparator(col)
 
         if (col == Board.SIZE - 1) {
             io.println()
 
-            if ((row + 1) % board.boxSize == 0) {
-                printHorizontalBorder(board)
+            if ((row + 1) % Board.BOX_SIZE == 0) {
+                printHorizontalBorder()
             }
         }
     }
@@ -88,21 +88,21 @@ class Renderer(val board: Board, val io: GameIO) {
         }
     }
 
-    private fun printCellSeparator(board: Board, col: Int) {
-        if ((col + 1) % board.boxSize == 0) {
+    private fun printCellSeparator(col: Int) {
+        if ((col + 1) % Board.BOX_SIZE == 0) {
             io.print("|")
         } else {
             io.print(" ")
         }
     }
 
-    private fun printHorizontalBorder(board: Board) {
+    private fun printHorizontalBorder() {
         io.print("--+")
 
         repeat(Board.SIZE) { col ->
             io.print("-")
 
-            if ((col + 1) % board.boxSize == 0) {
+            if ((col + 1) % Board.BOX_SIZE == 0) {
                 io.print("+")
             } else {
                 io.print("-")

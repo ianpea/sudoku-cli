@@ -10,18 +10,20 @@ import org.sudoku.domain.cell.CellType
 import org.sudoku.domain.board.exception.NoHintLeftException
 
 class Board {
-    private val cells: List<Cell> = List(CELL_COUNT) { index ->
+    private val _cells: List<Cell> = List(CELL_COUNT) { index ->
         Cell(CellPosition(index / SIZE, index % SIZE))
     }
+
+    val cells: List<Cell> get() = _cells
 
     fun canPlaceValue(position: CellPosition, value: Int): Boolean {
         val row = position.row
         val col = position.col
 
         val rowContents =
-            cells.filter { cell -> cell.position.row == row && cell.position.col != col }.map { cell -> cell.value }
+            _cells.filter { cell -> cell.position.row == row && cell.position.col != col }.map { cell -> cell.value }
         val colContents =
-            cells.filter { cell -> cell.position.col == col && cell.position.row != row }.map { cell -> cell.value }
+            _cells.filter { cell -> cell.position.col == col && cell.position.row != row }.map { cell -> cell.value }
 
         // row
         if (rowContents.contains(value)) {
@@ -43,7 +45,7 @@ class Board {
 
     fun insert(position: CellPosition, valueToBe: Int): InsertStatus {
         val index = position.row * SIZE + position.col
-        val cell = cells[index]
+        val cell = _cells[index]
 
         if (cell.type == CellType.PRE_FILLED) {
             throw CannotInsertPreFilledCellException(cell.position)
@@ -58,10 +60,10 @@ class Board {
     }
 
     fun isBoardFull(): Boolean =
-        cells.none { it.type == CellType.FILLABLE && it.value == 0 }
+        _cells.none { it.type == CellType.FILLABLE && it.value == 0 }
 
     fun hint(): GameStatus {
-        val emptyCells = cells.filter({ it.type == CellType.FILLABLE && it.value == 0 })
+        val emptyCells = _cells.filter({ it.type == CellType.FILLABLE && it.value == 0 })
         val hint = emptyCells.randomOrNull()
         if (hint != null) {
             return HintStatus(hint)
@@ -71,11 +73,11 @@ class Board {
     }
 
     fun getCellByRowAndCol(row: Int, col: Int): Cell {
-        return cells[row * SIZE + col]
+        return _cells[row * SIZE + col]
     }
 
     fun restore(position: CellPosition, value: Int) {
-        cells[position.row * SIZE + position.col].value = value
+        _cells[position.row * SIZE + position.col].value = value
     }
 
     fun getSubgrid(position: CellPosition): IntArray {
@@ -83,7 +85,7 @@ class Board {
         val startCol = (position.col / BOX_SIZE) * BOX_SIZE
 
         val boxContents =
-            cells.filter { cell ->
+            _cells.filter { cell ->
                 cell.position.row in startRow until startRow + BOX_SIZE
                         && cell.position.col in startCol until startCol + BOX_SIZE
                         && !(cell.position.row == position.row && cell.position.col == position.col)
@@ -94,14 +96,14 @@ class Board {
 
     fun getRows(): List<List<Int>> =
         (0 until SIZE).map { row ->
-            cells
+            _cells
                 .filter { it.position.row == row }
                 .map { it.value }
         }
 
     fun getColumns(): List<List<Int>> =
         (0 until SIZE).map { col ->
-            cells
+            _cells
                 .filter { it.position.col == col }
                 .map { it.value }
         }
@@ -111,7 +113,7 @@ class Board {
             val startRow = (subgridIndex / BOX_SIZE) * BOX_SIZE
             val startCol = (subgridIndex % BOX_SIZE) * BOX_SIZE
 
-            cells
+            _cells
                 .filter { cell ->
                     cell.position.row in startRow until startRow + BOX_SIZE &&
                             cell.position.col in startCol until startCol + BOX_SIZE
@@ -119,16 +121,23 @@ class Board {
                 .map { it.value }
         }
 
-    fun getCell(position: CellPosition): Cell {
-        return cells[position.row * SIZE + position.col]
+    fun getCell(index: Int): Cell {
+        return _cells[index]
     }
 
-    fun getCell(index: Int): Cell {
-        return cells[index]
+    fun getCell(position: CellPosition): Cell {
+        return _cells[position.row * SIZE + position.col]
     }
 
     fun getPosition(index: Int): CellPosition {
         return getCell(index).position
+    }
+
+    fun restoreClue(position: CellPosition, value: Int) {
+        val cell = getCell(position)
+
+        cell.value = value
+        cell.type = CellType.PRE_FILLED
     }
 
     fun removeClue(position: CellPosition): Int {
@@ -139,6 +148,14 @@ class Board {
         cell.type = CellType.FILLABLE
 
         return previousValue
+    }
+
+    fun setValue(index: Int, value: Int) {
+        getCell(index).value = value
+    }
+
+    fun setSolution(index: Int, value: Int) {
+        getCell(index).solution = value
     }
 
     companion object {

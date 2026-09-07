@@ -2,15 +2,14 @@ package org.sudoku.domain.board
 
 import org.sudoku.domain.board.Board.Companion.MAX_SOLUTION_COUNT
 import org.sudoku.domain.board.exception.PuzzleGenFailedException
-import org.sudoku.domain.cell.CellType
 
 class PuzzleGenerator() : BoardGenerator {
     override fun generatePuzzle(expectedClueCount: Int): Board {
         val board = Board()
         generateFullyValidBoard(board)
         // With a full board use backtrack to generate a 1 unique solution board.
-        var currentClueCount = board.cellCount
-        for (i in (0 until board.cellCount).shuffled()) {
+        var currentClueCount = Board.CELL_COUNT
+        for (i in (0 until Board.CELL_COUNT).shuffled()) {
             if (currentClueCount <= expectedClueCount) {
                 break
             }
@@ -22,8 +21,7 @@ class PuzzleGenerator() : BoardGenerator {
             if (countSolution(board) == 1) {
                 currentClueCount--
             } else {
-                board.getCell(i).value = originalValue
-                board.getCell(i).type = CellType.PRE_FILLED
+                board.restoreClue(board.getPosition(i), originalValue)
             }
         }
 
@@ -37,17 +35,17 @@ class PuzzleGenerator() : BoardGenerator {
     }
 
     fun generateFullyValidBoard(board: Board, index: Int = 0): Boolean {
-        if (index == board.cellCount) return true
+        if (index == Board.CELL_COUNT) return true
         val cell = board.getCell(index)
         for (value in (1..Board.SIZE).shuffled()) {
             if (board.canPlaceValue(cell.position, value)) {
-                board.getCell(index).value = value
-                board.getCell(index).solution = value
+                board.setValue(index,value)
+                board.setSolution(index,value)
                 if (generateFullyValidBoard(board, index + 1)) {
                     return true
                 }
-                board.getCell(index).value = 0
-                board.getCell(index).solution = 0
+                board.setValue(index, 0)
+                board.setSolution(index, 0)
             }
         }
 
@@ -58,7 +56,7 @@ class PuzzleGenerator() : BoardGenerator {
     fun countSolution(board: Board, index: Int = 0, limit: Int = MAX_SOLUTION_COUNT): Int {
         // Reached past the last cell:
         // this branch produced one complete valid solution.
-        if (index == board.cellCount) {
+        if (index == Board.CELL_COUNT) {
             return 1
         }
 
