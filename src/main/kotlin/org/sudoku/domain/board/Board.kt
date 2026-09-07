@@ -1,9 +1,7 @@
 package org.sudoku.domain.board
 
-import org.sudoku.common.status.GameStatus
 import org.sudoku.domain.cell.exception.CannotInsertPreFilledCellException
 import org.sudoku.common.status.InsertStatus
-import org.sudoku.common.status.HintStatus
 import org.sudoku.domain.cell.Cell
 import org.sudoku.domain.cell.CellPosition
 import org.sudoku.domain.cell.CellType
@@ -59,11 +57,11 @@ class Board {
     fun isBoardFull(): Boolean =
         _cells.none { it.type == CellType.FILLABLE && it.value == 0 }
 
-    fun hint(): GameStatus {
+    fun hint(): Hint {
         val emptyCells = _cells.filter({ it.type == CellType.FILLABLE && it.value == 0 })
-        val hint = emptyCells.randomOrNull()
-        if (hint != null) {
-            return HintStatus(hint)
+        val hintCell = emptyCells.randomOrNull()
+        if (hintCell != null) {
+            return Hint(hintCell.position, hintCell.solution)
         }
 
         throw NoHintLeftException()

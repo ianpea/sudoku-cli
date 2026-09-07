@@ -3,6 +3,7 @@ package org.sudoku.app
 import org.junit.jupiter.api.Nested
 import org.sudoku.cli.input.ClearCommand
 import org.sudoku.cli.input.InsertCommand
+import org.sudoku.common.status.HintStatus
 import org.sudoku.domain.board.Board
 import org.sudoku.domain.board.exception.NoHintLeftException
 import org.sudoku.domain.cell.CellPosition
@@ -161,8 +162,9 @@ class GameServiceTest {
         @Test
         fun `returns a valid hint when given unfinished board`() {
             val board = SudokuFixtures.hintableBoard()
-            val hintStatus = board.hint()
-            assertEquals("Hint: 'A1 5'.", hintStatus.message)
+            val hint = board.hint()
+            val status = HintStatus(hint)
+            assertEquals("Hint: 'A1 5'.", status.message)
         }
 
         @Test

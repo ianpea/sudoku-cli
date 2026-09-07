@@ -5,6 +5,7 @@ import org.sudoku.cli.input.InsertCommand
 import org.sudoku.common.status.CellClearedGameStatus
 import org.sudoku.common.status.CompletedGameStatus
 import org.sudoku.common.status.GameStatus
+import org.sudoku.common.status.HintStatus
 import org.sudoku.common.status.NoViolationsStatus
 import org.sudoku.common.status.NotCompletedGameStatus
 import org.sudoku.common.status.UndoSuccessStatus
@@ -88,9 +89,9 @@ class GameService(
     }
 
     fun hint(): GameStatus {
-        val status = board.hint()
+        val hint = board.hint()
         hintsUsed++
-        return status
+        return HintStatus(hint)
     }
 
     fun undo(): GameStatus {
