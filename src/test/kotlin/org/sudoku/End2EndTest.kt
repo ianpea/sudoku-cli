@@ -11,7 +11,7 @@ class End2EndTest {
     fun `player can insert and win the game`() {
         val io = FakeGameIO(
             listOf(
-                "A1 5", "I9 9", "check", "quit"
+                "I9 9", "A1 5", "check", "quit"
             )
         )
 
