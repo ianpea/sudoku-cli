@@ -98,9 +98,7 @@ Cells are then removed in random order. After each removal, the number of possib
 
 The standard game continues until exactly **30 clues** remain. If a generation attempt cannot reach the requested clue count while maintaining uniqueness, a new puzzle is generated.
 
-A standard 9x9 Sudoku with a unique solution cannot contain fewer than 17 clues, as shown in [this proof](https://arxiv.org/pdf/1201.0749).
-
-This implementation uses **30 clues as its configured minimum and default** to keep puzzle generation time practical with the current randomized backtracking approach.
+*This application restricts the configured clue count to a minimum bound of **30**.
 
 ## Design and Architecture
 
@@ -207,3 +205,9 @@ java -jar build/libs/sudoku_kotlin-1.0-SNAPSHOT-all.jar
 ```
 
 The same command can be used on Windows.
+
+
+## Sudoku Knowledge
+Did you know that **a standard 9x9 Sudoku with a unique solution cannot
+contain fewer than 17 clues** as proven [here](https://arxiv.org/pdf/1201.0749).
+Generally, published puzzles aimed at human solvers rarely go below 22 clues, as mentioned [here](https://sudoku.by/sudoku-faq/minimum-clues).
