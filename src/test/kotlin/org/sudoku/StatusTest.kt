@@ -36,6 +36,6 @@ class StatusTest {
         assertEquals("Last move is INSERT A1, with value: 4.", ShowMoveStatus(move).message)
         assertEquals("Undo successful: A1 restored to 0.", UndoSuccessStatus(move).message)
         assertEquals("An unexpected error has occurred.", ErrorStatus(null).message)
-        assertEquals("Session ended.", SessionEndedGameStatus().message)
+        assertEquals("Game session ended.", SessionEndedGameStatus().message)
     }
 }

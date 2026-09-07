@@ -19,7 +19,7 @@ class RendererTest {
 
         assertContains(output, "  |1 2 3|4 5 6|7 8 9|")
         assertContains(output, "A |0 0 0|0 0 0|0 0 0|")
-        assertContains(output, "Session ended.")
+        assertContains(output, "Game session ended.")
     }
 
     @Test
@@ -28,6 +28,6 @@ class RendererTest {
         Renderer(Board(), io).renderStatusOnly(SessionEndedGameStatus())
         val output = io.output()
 
-        assertEquals("Session ended.\n", output)
+        assertEquals("Game session ended.\n", output)
     }
 }

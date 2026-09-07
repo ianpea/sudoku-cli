@@ -16,7 +16,7 @@ class Renderer(val board: Board, val io: GameIO) {
         }
 
         io.println()
-        io.println(gameStatus?.message ?: "Enter input (e.g., A3 4, C5 clear, hint, check, undo, lastmove):\n")
+        io.println(gameStatus?.message ?: "Enter input (e.g., A3 4, C5 clear, hint, check, lastmove, undo):\n")
         io.println()
     }
 
@@ -30,8 +30,10 @@ class Renderer(val board: Board, val io: GameIO) {
                     "commands:\n" +
                     "Insert          => 'B1 4'\n" +
                     "Clear           => 'A3 clear'\n" +
+                    "Hint            => 'hint'\n" +
                     "Check           => 'check'\n" +
                     "Show Last Move  => 'lastmove'\n" +
+                    "Undo            => 'undo'\n" +
                     "Exit            => 'exit' / 'quit\n\n" +
                     "Here is your puzzle:"
         )
