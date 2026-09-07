@@ -13,7 +13,7 @@ class PuzzleGeneratorTest {
         val board = Board()
         val generator = PuzzleGenerator()
 
-        assertTrue(generator.fillBoard(board))
+        assertTrue(generator.generateFullyValidBoard(board))
         assertTrue(board.cells.all { it.value in 1..Board.SIZE })
         assertEquals(1, generator.countSolution(board))
     }

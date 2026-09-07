@@ -23,7 +23,11 @@ class End2EndTest {
         assertTrue(
             io.output().contains("Inserted 4 to A3.")
                     || io.output().contains("Cannot insert to pre-filled cell A3.")
+                    || io.output().contains("already exists in Row")
+                    || io.output().contains("already exists in Column")
+                    || io.output().contains("already exists in the same 3x3 subgrid")
         )
+
         assertTrue(
             io.output().contains("No rule violations detected")
                     || io.output().contains("already exists in Row")

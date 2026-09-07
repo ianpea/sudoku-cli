@@ -68,13 +68,13 @@ class CommandParser(val maxRowAlphabet: Char) {
         // insert input
         if (part2 != null) {
             if (part2 in 1..9) {
-                return InsertCommand(CellPosition(row = row, col = col), value = part2)
+                return InsertCommand(CellPosition(row = row, col = col - 1), value = part2)
             }
             throw InvalidInputException("Invalid input '$input'.")
         } else {
             // clear input
             if (part2Raw == "CLEAR") {
-                return ClearCommand(CellPosition(row = row, col = col))
+                return ClearCommand(CellPosition(row = row, col = col - 1))
             }
             throw InvalidInputException("Invalid input '$input'.")
         }

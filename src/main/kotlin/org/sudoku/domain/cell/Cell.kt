@@ -5,7 +5,7 @@ import org.sudoku.domain.cell.exception.CannotClearPreFilledCellException
 import org.sudoku.domain.cell.exception.CannotInsertPreFilledCellException
 
 data class Cell(
-    var position: CellPosition,
+    val position: CellPosition,
     var type: CellType = CellType.PRE_FILLED,
     var value: Int = 0,
     var solution: Int = 0

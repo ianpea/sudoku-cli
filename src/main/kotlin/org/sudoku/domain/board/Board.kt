@@ -36,16 +36,13 @@ class Board() {
         }
 
         // subgrid 3x3
-        val subGridContents = getSubGrid(position)
+        val subGridContents = getSubgrid(position)
         if (subGridContents.contains(value)) {
             return false
         }
         return true
     }
 
-    /**
-     *   Insert the value into the cell, if it's not pre-filled.
-     */
     fun insert(position: CellPosition, valueToBe: Int): InsertStatus {
         val index = position.row * SIZE + position.col
         val cell = cells[index]
@@ -58,23 +55,12 @@ class Board() {
         }
     }
 
-    fun getSubGrid(position: CellPosition): IntArray {
-        val startRow = (position.row / boxSize) * boxSize
-        val startCol = (position.col / boxSize) * boxSize
-
-        val boxContents =
-            cells.filter { cell ->
-                cell.position.row in startRow until startRow + boxSize
-                        && cell.position.col in startCol until startCol + boxSize
-                        && !(cell.position.row == position.row && cell.position.col == position.col)
-            }.map { it.value }.toIntArray()
-
-        return boxContents
+    fun clear(position: CellPosition) {
+        getCellByRowAndCol(position.row, position.col).clear()
     }
 
-    fun isFullBoard(): Boolean =
+    fun isBoardFull(): Boolean =
         cells.none { it.type == CellType.FILLABLE && it.value == 0 }
-
 
     fun hint(): GameStatus {
         val emptyCells = cells.filter({ it.type == CellType.FILLABLE && it.value == 0 })
@@ -92,6 +78,20 @@ class Board() {
 
     fun restore(position: CellPosition, value: Int) {
         cells[position.row * SIZE + position.col].value = value
+    }
+
+    fun getSubgrid(position: CellPosition): IntArray {
+        val startRow = (position.row / boxSize) * boxSize
+        val startCol = (position.col / boxSize) * boxSize
+
+        val boxContents =
+            cells.filter { cell ->
+                cell.position.row in startRow until startRow + boxSize
+                        && cell.position.col in startCol until startCol + boxSize
+                        && !(cell.position.row == position.row && cell.position.col == position.col)
+            }.map { it.value }.toIntArray()
+
+        return boxContents
     }
 
     fun getRows(): List<List<Int>> =
@@ -121,8 +121,26 @@ class Board() {
                 .map { it.value }
         }
 
-    fun clear(position: CellPosition) {
-        getCellByRowAndCol(position.row, position.col).clear()
+    fun getCell(position: CellPosition): Cell {
+        return cells[position.row * SIZE + position.col]
+    }
+
+    fun getCell(index: Int): Cell {
+        return cells[index]
+    }
+
+    fun getPosition(index: Int): CellPosition {
+        return getCell(index).position
+    }
+
+    fun removeClue(position: CellPosition): Int {
+        val cell = getCell(position)
+        val previousValue = cell.value
+
+        cell.value = 0
+        cell.type = CellType.FILLABLE
+
+        return previousValue
     }
 
     companion object {

@@ -67,7 +67,7 @@ class GameService(
     }
 
     fun checkWinCondition(): GameStatus {
-        val win = board.isFullBoard() && check() is NoViolationsStatus
+        val win = board.isBoardFull() && check() is NoViolationsStatus
         return if (win) CompletedGameStatus(moveService.moveCount, hintsUsed) else NotCompletedGameStatus()
     }
 

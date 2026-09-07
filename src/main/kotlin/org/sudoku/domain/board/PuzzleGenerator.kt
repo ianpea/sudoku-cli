@@ -7,7 +7,7 @@ import org.sudoku.domain.cell.CellType
 class PuzzleGenerator() : BoardGenerator {
     override fun generatePuzzle(expectedClueCount: Int): Board {
         val board = Board()
-        fillBoard(board)
+        generateFullyValidBoard(board)
         // With a full board use backtrack to generate a 1 unique solution board.
         var currentClueCount = board.cellCount
         for (i in (0 until board.cellCount).shuffled()) {
@@ -15,15 +15,15 @@ class PuzzleGenerator() : BoardGenerator {
                 break
             }
 
-            val originalValue = board.cells[i].value
+            val originalValue = board.getCell(i).value
 
-            board.cells[i].value = 0
-            board.cells[i].type = CellType.FILLABLE
+            board.removeClue(board.getPosition(i))
+
             if (countSolution(board) == 1) {
                 currentClueCount--
             } else {
-                board.cells[i].value = originalValue
-                board.cells[i].type = CellType.PRE_FILLED
+                board.getCell(i).value = originalValue
+                board.getCell(i).type = CellType.PRE_FILLED
             }
         }
 
@@ -36,18 +36,18 @@ class PuzzleGenerator() : BoardGenerator {
         return board
     }
 
-    fun fillBoard(board: Board, index: Int = 0): Boolean {
+    fun generateFullyValidBoard(board: Board, index: Int = 0): Boolean {
         if (index == board.cellCount) return true
-        val cell = board.cells[index]
+        val cell = board.getCell(index)
         for (value in (1..Board.SIZE).shuffled()) {
             if (board.canPlaceValue(cell.position, value)) {
-                board.cells[index].value = value
-                board.cells[index].solution = value
-                if (fillBoard(board, index + 1)) {
+                board.getCell(index).value = value
+                board.getCell(index).solution = value
+                if (generateFullyValidBoard(board, index + 1)) {
                     return true
                 }
-                board.cells[index].value = 0
-                board.cells[index].solution = 0
+                board.getCell(index).value = 0
+                board.getCell(index).solution = 0
             }
         }
 
@@ -62,7 +62,7 @@ class PuzzleGenerator() : BoardGenerator {
             return 1
         }
 
-        val cell = board.cells[index]
+        val cell = board.getCell(index)
         var solutionCount = 0
 
         // This cell is already fixed, so continue to the next cell.
@@ -73,7 +73,7 @@ class PuzzleGenerator() : BoardGenerator {
         // Each valid candidate creates a separate solution branch.
         for (value in (1..Board.SIZE).shuffled()) {
             if (board.canPlaceValue(cell.position, value)) {
-                board.cells[index].value = value
+                board.getCell(index).value = value
 
                 val resultFromChild = countSolution(board, index + 1, limit - solutionCount)
                 solutionCount += resultFromChild
@@ -82,7 +82,7 @@ class PuzzleGenerator() : BoardGenerator {
             }
 
             // Undo this choice before trying another branch.
-            board.cells[index].value = 0
+            board.getCell(index).value = 0
 
             // Stop once this call has found enough solutions
             // to satisfy the requested limit.
