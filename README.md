@@ -136,7 +136,7 @@ A player may insert a value that creates a duplicate. The move is accepted, and 
 
 ```text
 A3 3
-Move accepted.
+Inserted 3 to A2.
 
 check
 Number 3 already exists in Row A.

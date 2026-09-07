@@ -11,7 +11,7 @@ class End2EndTest {
     fun `player can insert and win the game`() {
         val io = FakeGameIO(
             listOf(
-                "I9 9", "A1 5", "check", "quit"
+                "I9 9", "A1 5"
             )
         )
 
@@ -40,8 +40,6 @@ class End2EndTest {
             io = io, puzzleGenerator = FakePuzzleGenerator(board)
         )
 
-        // Below asserts are based on the fact that the board is dynamically generated,
-        // and the insert command might generate one of the outcomes.
         assertTrue(io.output().contains("Inserted 4 to A1."))
         assertTrue { io.output().contains("Undo successful") }
         assertTrue { io.output().contains("No rule violations detected.") }
@@ -64,8 +62,6 @@ class End2EndTest {
             io = io, puzzleGenerator = FakePuzzleGenerator(board)
         )
 
-        // Below asserts are based on the fact that the board is dynamically generated,
-        // and the insert command might generate one of the outcomes.
         assertTrue(io.output().contains("Inserted 4 to A1."))
         assertTrue { io.output().contains("already exists in") }
 
