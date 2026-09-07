@@ -59,7 +59,7 @@ class CommandParser(val maxRowAlphabet: Char) {
     }
 
     private fun parseInput(input: String): Cell {
-        val parts = input.split(" ")
+        val parts = input.split(Regex("\\s+"))
         if (parts.size != 2) {
             throw InvalidInputException("Invalid input '$input'.")
         }

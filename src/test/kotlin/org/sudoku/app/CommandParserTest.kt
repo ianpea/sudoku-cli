@@ -51,4 +51,14 @@ class CommandParserTest {
             assertFailsWith<InvalidInputException> { parser.parse(input) }
         }
     }
+
+    @Test
+    fun `parse accepts a valid but with extra space in the middle`() {
+        assertEquals(
+            ClearCommand(CellPosition(0, 0)), parser.parse("A1   clear")
+        )
+        assertEquals(
+            InsertCommand(CellPosition(0, 0), 8), parser.parse("A1  8")
+        )
+    }
 }
