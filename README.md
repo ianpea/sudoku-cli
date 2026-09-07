@@ -120,13 +120,13 @@ The application separates CLI concerns, game orchestration, domain state, move h
 
 ### Core Responsibilities
 
-* **`GameService`** coordinates gameplay and determines game completion.
-* **`Board`** owns the 81 cells and board-level operations. Rows, columns, and subgrids are derived from the flat cell collection when required.
-* **`PuzzleGenerator`** creates uniquely solvable puzzles using randomized backtracking.
-* **`MoveService`** manages move history and undo.
-* **`ViolationTracker`** is a stateless Java validator for row, column, and subgrid duplicates.
-* **`CommandParser` / `Renderer`** translate between CLI input/output and the application layer.
-* **`GameIO`** abstracts console I/O, allowing complete game flows to be tested with `FakeGameIO`.
+* **`GameService`** orchestrates the game flow, coordinating board generation, player actions, move history, hints, rule validation, and game completion.
+* **`Board`** owns the 81 cells and board-level operations such as insert, clear, restore, and hint selection. Rows, columns, and subgrids are derived from the flat cell collection when required.
+* **`BoardGenerator` / `PuzzleGenerator`** separate puzzle generation behind an interface. `PuzzleGenerator` creates a completed board using randomized backtracking, then removes cells while verifying that the puzzle retains a unique solution.
+* **`MoveService`** records player moves and manages move history for undo operations.
+* **`ViolationTracker`** is a stateless Java validator that detects duplicate values across rows, columns, and subgrids.
+* **`CommandParser` / `Renderer`** form the CLI boundary, translating user input into application commands and game state into console output.
+* **`GameIO`** abstracts console I/O, allowing complete game flows to be tested without relying on `stdin` or `stdout`.
 
 ### Move Validation vs Sudoku Validation
 
