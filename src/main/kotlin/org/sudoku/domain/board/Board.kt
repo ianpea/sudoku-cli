@@ -9,10 +9,8 @@ import org.sudoku.domain.cell.CellPosition
 import org.sudoku.domain.cell.CellType
 import org.sudoku.domain.board.exception.NoHintLeftException
 
-class Board() {
-    val cellCount: Int = CELL_COUNT
-    val boxSize: Int = BOX_SIZE
-    val cells: List<Cell> = List(cellCount) { index ->
+class Board {
+    private val cells: List<Cell> = List(CELL_COUNT) { index ->
         Cell(CellPosition(index / SIZE, index % SIZE))
     }
 
@@ -81,13 +79,13 @@ class Board() {
     }
 
     fun getSubgrid(position: CellPosition): IntArray {
-        val startRow = (position.row / boxSize) * boxSize
-        val startCol = (position.col / boxSize) * boxSize
+        val startRow = (position.row / BOX_SIZE) * BOX_SIZE
+        val startCol = (position.col / BOX_SIZE) * BOX_SIZE
 
         val boxContents =
             cells.filter { cell ->
-                cell.position.row in startRow until startRow + boxSize
-                        && cell.position.col in startCol until startCol + boxSize
+                cell.position.row in startRow until startRow + BOX_SIZE
+                        && cell.position.col in startCol until startCol + BOX_SIZE
                         && !(cell.position.row == position.row && cell.position.col == position.col)
             }.map { it.value }.toIntArray()
 
@@ -110,13 +108,13 @@ class Board() {
 
     fun getSubgrids(): List<List<Int>> =
         (0 until SIZE).map { subgridIndex ->
-            val startRow = (subgridIndex / boxSize) * boxSize
-            val startCol = (subgridIndex % boxSize) * boxSize
+            val startRow = (subgridIndex / BOX_SIZE) * BOX_SIZE
+            val startCol = (subgridIndex % BOX_SIZE) * BOX_SIZE
 
             cells
                 .filter { cell ->
-                    cell.position.row in startRow until startRow + boxSize &&
-                            cell.position.col in startCol until startCol + boxSize
+                    cell.position.row in startRow until startRow + BOX_SIZE &&
+                            cell.position.col in startCol until startCol + BOX_SIZE
                 }
                 .map { it.value }
         }
