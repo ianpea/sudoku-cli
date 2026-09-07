@@ -34,7 +34,7 @@ class Renderer(val board: Board, val io: GameIO) {
                     "Check           => 'check'\n" +
                     "Show Last Move  => 'lastmove'\n" +
                     "Undo            => 'undo'\n" +
-                    "Exit            => 'exit' / 'quit\n\n" +
+                    "Exit            => 'exit' / 'quit'\n\n" +
                     "Here is your puzzle:"
         )
     }

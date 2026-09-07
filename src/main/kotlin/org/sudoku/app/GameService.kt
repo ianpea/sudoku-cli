@@ -49,9 +49,12 @@ class GameService(
     }
 
     fun insert(command: InsertCommand): GameStatus {
-        val originalCell = board.getCellByRowAndCol(command.position.row, command.position.col).copy()
+        val position = command.position
+        val cell = board.getCellByRowAndCol(position.row, position.col)
+        val previousValue = cell.value
+
         val status = board.insert(command.position, command.value)
-        moveService.addMove(originalCell.position, originalCell.value, command.value, MoveType.INSERT)
+        moveService.addMove(command.position, previousValue, command.value, MoveType.INSERT)
         return status
     }
 
@@ -61,7 +64,6 @@ class GameService(
         val previousValue = cell.value
 
         board.clear(cell.position)
-
         moveService.addMove(cell.position, previousValue, 0, MoveType.CLEAR)
         return CellClearedGameStatus(command.position)
     }

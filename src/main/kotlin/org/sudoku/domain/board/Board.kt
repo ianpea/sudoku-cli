@@ -37,10 +37,7 @@ class Board {
 
         // subgrid 3x3
         val subGridContents = getSubgrid(position)
-        if (subGridContents.contains(value)) {
-            return false
-        }
-        return true
+        return !subGridContents.contains(value)
     }
 
     fun insert(position: CellPosition, valueToBe: Int): InsertStatus {
@@ -168,6 +165,6 @@ class Board {
         const val CELL_COUNT = SIZE * SIZE
         const val MAX_ROW_ALPHABET = 'I'
         const val MIN_CLUE_COUNT = 30
-        const val MAX_GENERATION_TRIES = 1000
+        const val MAX_GENERATION_TRIES = 20
     }
 }
