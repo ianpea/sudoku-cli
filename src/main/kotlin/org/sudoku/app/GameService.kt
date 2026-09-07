@@ -16,9 +16,9 @@ import org.sudoku.domain.move.MoveType
 import org.sudoku.domain.violation.ViolationTracker
 
 class GameService(
-    val moveService: MoveService,
-    val puzzleGenerator: BoardGenerator,
-    val violationTracker: ViolationTracker,
+    private val moveService: MoveService,
+    private val puzzleGenerator: BoardGenerator,
+    private val violationTracker: ViolationTracker,
     val expectedClueCount: Int = 30
 ) {
     init {
@@ -37,13 +37,15 @@ class GameService(
     }
 
     fun generateBoard(): Board {
-        while (true) {
+        repeat(Board.MAX_GENERATION_TRIES) {
             try {
                 return puzzleGenerator.generatePuzzle(expectedClueCount)
             } catch (_: PuzzleGenFailedException) {
                 // Retry puzzle generation
             }
         }
+
+        throw PuzzleGenFailedException("Could not generate puzzle after ${Board.MAX_GENERATION_TRIES} tries.")
     }
 
     fun insert(command: InsertCommand): GameStatus {
@@ -55,12 +57,12 @@ class GameService(
 
     fun clear(command: ClearCommand): GameStatus {
         val position = command.position
-        val originalCell = board.getCellByRowAndCol(position.row, position.col)
-        val originalCellCopy = originalCell.copy()
+        val cell = board.getCellByRowAndCol(position.row, position.col)
+        val previousValue = cell.value
 
-        board.clear(originalCell.position)
+        board.clear(cell.position)
 
-        moveService.addMove(originalCell.position, originalCellCopy.value, 0, MoveType.CLEAR)
+        moveService.addMove(cell.position, previousValue, 0, MoveType.CLEAR)
         return CellClearedGameStatus(command.position)
     }
 

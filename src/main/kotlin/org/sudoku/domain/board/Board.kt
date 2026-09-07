@@ -132,5 +132,6 @@ class Board() {
         const val CELL_COUNT = SIZE * SIZE
         const val MAX_ROW_ALPHABET = 'I'
         const val MIN_CLUE_COUNT = 30
+        const val MAX_GENERATION_TRIES = 1000
     }
 }

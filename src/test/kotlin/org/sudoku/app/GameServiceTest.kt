@@ -182,7 +182,7 @@ class GameServiceTest {
             val puzzleGenerator = FakePuzzleGenerator(board)
             val io = FakeGameIO(listOf("check", "quit"))
             runGame(io, puzzleGenerator)
-            assertContains(io.output(), "No violations found.")
+            assertContains(io.output(), "No rule violations detected.")
         }
 
         @Test

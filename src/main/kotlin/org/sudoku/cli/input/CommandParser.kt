@@ -1,7 +1,6 @@
 package org.sudoku.cli.input
 
 import org.sudoku.cli.exception.InvalidInputException
-import org.sudoku.domain.cell.Cell
 import org.sudoku.domain.cell.CellPosition
 
 class CommandParser(val maxRowAlphabet: Char) {
@@ -17,8 +16,8 @@ class CommandParser(val maxRowAlphabet: Char) {
                 CheckCommand
             }
 
-            input.contains("CLEAR") -> {
-                parseClearCommand(input)
+            input.endsWith("CLEAR") -> {
+                parseInput(input)
             }
 
             input == "HINT" -> {
@@ -38,27 +37,13 @@ class CommandParser(val maxRowAlphabet: Char) {
             }
 
             else -> {
-                parseInsertCommand(input)
+                parseInput(input)
             }
         }
     }
 
-    private fun parseInsertCommand(input: String): InsertCommand {
-        val cell = parseInput(input)
-        return InsertCommand(
-            CellPosition(
-                cell.position.row, cell.position.col
-                        - 1
-            ), value = cell.value
-        )
-    }
 
-    private fun parseClearCommand(input: String): ClearCommand {
-        val cell = parseInput(input)
-        return ClearCommand(CellPosition(cell.position.row, cell.position.col - 1))
-    }
-
-    private fun parseInput(input: String): Cell {
+    private fun parseInput(input: String): GameCommand {
         val parts = input.split(Regex("\\s+"))
         if (parts.size != 2) {
             throw InvalidInputException("Invalid input '$input'.")
@@ -83,13 +68,13 @@ class CommandParser(val maxRowAlphabet: Char) {
         // insert input
         if (part2 != null) {
             if (part2 in 1..9) {
-                return Cell(CellPosition(row = row, col = col), value = part2)
+                return InsertCommand(CellPosition(row = row, col = col), value = part2)
             }
             throw InvalidInputException("Invalid input '$input'.")
         } else {
             // clear input
             if (part2Raw == "CLEAR") {
-                return Cell(CellPosition(row = row, col = col))
+                return ClearCommand(CellPosition(row = row, col = col))
             }
             throw InvalidInputException("Invalid input '$input'.")
         }
