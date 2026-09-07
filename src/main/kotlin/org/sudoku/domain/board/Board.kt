@@ -121,7 +121,7 @@ class Board {
                 .map { it.value }
         }
 
-    fun getCell(index: Int): Cell {
+    private fun getCell(index: Int): Cell {
         return _cells[index]
     }
 
@@ -132,6 +132,9 @@ class Board {
     fun getPosition(index: Int): CellPosition {
         return getCell(index).position
     }
+
+    fun getValue(index: Int): Int =
+        _cells[index].value
 
     fun restoreClue(position: CellPosition, value: Int) {
         val cell = getCell(position)

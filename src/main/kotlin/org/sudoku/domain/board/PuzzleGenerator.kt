@@ -14,14 +14,13 @@ class PuzzleGenerator() : BoardGenerator {
                 break
             }
 
-            val originalValue = board.getCell(i).value
-
-            board.removeClue(board.getPosition(i))
+            val position = board.getPosition(i)
+            val originalValue = board.removeClue(position)
 
             if (countSolution(board) == 1) {
                 currentClueCount--
             } else {
-                board.restoreClue(board.getPosition(i), originalValue)
+                board.restoreClue(position, originalValue)
             }
         }
 
@@ -36,11 +35,11 @@ class PuzzleGenerator() : BoardGenerator {
 
     fun generateFullyValidBoard(board: Board, index: Int = 0): Boolean {
         if (index == Board.CELL_COUNT) return true
-        val cell = board.getCell(index)
+        val position = board.getPosition(index)
         for (value in (1..Board.SIZE).shuffled()) {
-            if (board.canPlaceValue(cell.position, value)) {
-                board.setValue(index,value)
-                board.setSolution(index,value)
+            if (board.canPlaceValue(position, value)) {
+                board.setValue(index, value)
+                board.setSolution(index, value)
                 if (generateFullyValidBoard(board, index + 1)) {
                     return true
                 }
@@ -60,32 +59,27 @@ class PuzzleGenerator() : BoardGenerator {
             return 1
         }
 
-        val cell = board.getCell(index)
+        val position = board.getPosition(index)
         var solutionCount = 0
 
         // This cell is already fixed, so continue to the next cell.
-        if (cell.value != 0) {
+        if (board.getValue(index) != 0) {
             return countSolution(board, index + 1)
         }
 
         // Each valid candidate creates a separate solution branch.
         for (value in (1..Board.SIZE).shuffled()) {
-            if (board.canPlaceValue(cell.position, value)) {
-                board.getCell(index).value = value
+            if (board.canPlaceValue(position, value)) {
+                board.setValue(index, value)
 
                 val resultFromChild = countSolution(board, index + 1, limit - solutionCount)
                 solutionCount += resultFromChild
-            } else {
-                continue
-            }
 
-            // Undo this choice before trying another branch.
-            board.getCell(index).value = 0
+                board.setValue(index, 0)
 
-            // Stop once this call has found enough solutions
-            // to satisfy the requested limit.
-            if (solutionCount >= limit) {
-                return solutionCount
+                if (solutionCount >= limit) {
+                    return solutionCount
+                }
             }
         }
         return solutionCount
