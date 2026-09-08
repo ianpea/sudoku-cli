@@ -37,7 +37,7 @@ fun runGame(io: GameIO, puzzleGenerator: BoardGenerator = PuzzleGenerator()) {
     val violationTracker = ViolationTracker()
     val gameService = GameService(moveService, puzzleGenerator, violationTracker)
     gameService.startGame()
-    val renderer = Renderer(gameService.board, io)
+    val renderer = Renderer(gameService.board.cells, io)
     val commandParser = CommandParser(Board.MAX_ROW_ALPHABET)
 
     var gameStatusMessage: GameStatus?

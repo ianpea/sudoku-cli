@@ -13,7 +13,7 @@ class RendererTest {
     @Test
     fun `render prints the board and status message`() {
         val io = FakeGameIO(listOf(""))
-        Renderer(Board(), io).render(SessionEndedGameStatus())
+        Renderer(Board().cells, io).render(SessionEndedGameStatus())
 
         val output = io.output()
 
@@ -25,7 +25,7 @@ class RendererTest {
     @Test
     fun `render status only prints the status message`() {
         val io = FakeGameIO(listOf(""))
-        Renderer(Board(), io).renderStatusOnly(SessionEndedGameStatus())
+        Renderer(Board().cells, io).renderStatusOnly(SessionEndedGameStatus())
         val output = io.output()
 
         assertEquals("Game session ended.\n", output)

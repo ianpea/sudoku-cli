@@ -6,12 +6,12 @@ import org.sudoku.domain.board.Board
 import org.sudoku.domain.cell.Cell
 import org.sudoku.domain.cell.CellType
 
-class Renderer(val board: Board, val io: GameIO) {
+class Renderer(val cells: List<Cell>, val io: GameIO) {
     fun render(gameStatus: GameStatus?) {
         printColumnHeader()
         printHorizontalBorder()
 
-        for (cell in board.cells) {
+        for (cell in cells) {
             printCell(cell)
         }
 
