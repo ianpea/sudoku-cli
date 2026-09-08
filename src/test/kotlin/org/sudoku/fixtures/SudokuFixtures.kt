@@ -198,4 +198,86 @@ object SudokuFixtures {
 
         return board
     }
+
+    fun rowViolationBoard(): Board {
+        val values = listOf(
+            5, 0, 0, 5, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0
+        )
+        val board = Board()
+        board.cells.forEachIndexed { index, cell ->
+            cell.value = values[index]
+            cell.type = CellType.PRE_FILLED
+        }
+        return board
+    }
+
+    fun columnViolationBoard(): Board {
+        val values = listOf(
+            5, 0, 0, 0, 0, 0, 0, 0, 0,
+            5, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0
+        )
+        val board = Board()
+        board.cells.forEachIndexed { index, cell ->
+            cell.value = values[index]
+            cell.type = CellType.PRE_FILLED
+        }
+        return board
+    }
+
+    fun subgridViolationBoard(): Board {
+
+        val values = listOf(
+            5, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 5, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0
+        )
+        val board = Board()
+        board.cells.forEachIndexed { index, cell ->
+            cell.value = values[index]
+            cell.type = CellType.PRE_FILLED
+        }
+        return board
+    }
+
+    fun zerosBoard(): Board {
+
+        val values = listOf(
+            0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0
+        )
+        val board = Board()
+        board.cells.forEachIndexed { index, cell ->
+            cell.value = values[index]
+            cell.type = CellType.PRE_FILLED
+        }
+        return board
+    }
 }

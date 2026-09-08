@@ -7,7 +7,7 @@ public class ViolationTracker {
     public Violation findViolation(
             List<List<Integer>> rows,
             List<List<Integer>> columns,
-            List<List<Integer>> boxes
+            List<List<Integer>> subgrids
     ) {
         Violation violation = findDuplicate(rows, ViolationType.ROW);
 
@@ -21,7 +21,7 @@ public class ViolationTracker {
             return violation;
         }
 
-        return findDuplicate(boxes, ViolationType.SUBGRID);
+        return findDuplicate(subgrids, ViolationType.SUBGRID);
     }
 
     private Violation findDuplicate(
